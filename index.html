@@ -350,10 +350,287 @@
     .achievements-grid { grid-template-columns: 1fr; }
     .certs-grid { grid-template-columns: 1fr 1fr; }
   }
+
+  /* =========================================================
+     PRELOADER V3 — COSMIC SYSTEM GENESIS
+     ========================================================= */
+
+  /* The preloader sits above everything and covers the full viewport */
+  #preloader {
+    position: fixed;
+    inset: 0;
+    background: #08080F;
+    z-index: 9999;
+    overflow: hidden;
+    /* opacity driven by JS for smooth fade-out */
+    opacity: 1;
+    transition: opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  #preloader.pl-exit {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Cinematic vignette warp — subtle gravitational lensing at edges */
+  #pl-vignette-warp {
+    position: absolute;
+    inset: -4px;
+    pointer-events: none;
+    z-index: 7;
+    opacity: 0;
+    /* SVG filter applied via JS */
+    transition: opacity 0.8s ease;
+  }
+  #pl-vignette-warp.active {
+    opacity: 1;
+  }
+  #pl-vignette-warp.relaxing {
+    opacity: 0;
+    transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Focus-mode core dimming — applied when text is readable */
+  #pl-core.focus-dim {
+    box-shadow:
+      0 0 5px 1px rgba(251,191,36,0.45),
+      0 0 14px 4px rgba(251,191,36,0.22),
+      0 0 30px 10px rgba(251,191,36,0.08);
+    transition: box-shadow 1.2s ease, transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  #pl-core.expanding.focus-dim {
+    box-shadow:
+      0 0 10px 3px rgba(251,191,36,0.5),
+      0 0 36px 12px rgba(251,191,36,0.22),
+      0 0 80px 36px rgba(251,191,36,0.08),
+      0 0 130px 65px rgba(139,92,246,0.05);
+    transition: box-shadow 1.2s ease, transform 0.6s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* Full-screen canvas: constellation network */
+  #pl-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* The gold energy core — centre of the screen */
+  #pl-core {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #FFD166 0%, #FBBF24 50%, #F59E0B 100%);
+    transform: translate(-50%, -50%) scale(0);
+    box-shadow:
+      0 0 8px 2px rgba(251,191,36,0.9),
+      0 0 20px 6px rgba(251,191,36,0.5),
+      0 0 48px 16px rgba(251,191,36,0.2);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.5s ease;
+    z-index: 10;
+  }
+  #pl-core.alive {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  #pl-core.expanding {
+    transform: translate(-50%, -50%) scale(3);
+    box-shadow:
+      0 0 16px 4px rgba(251,191,36,0.95),
+      0 0 60px 20px rgba(251,191,36,0.6),
+      0 0 140px 60px rgba(251,191,36,0.2),
+      0 0 200px 100px rgba(139,92,246,0.12);
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.6s ease;
+  }
+
+  /* Pulse rings — indigo/violet, signal-like */
+  .pl-pulse {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .pl-pulse.fire {
+    animation: plCosmicPulse 2s cubic-bezier(0.2, 0, 0.8, 1) forwards;
+  }
+  .pl-pulse:nth-child(1) { border: 1px solid rgba(99,102,241,0.7); }
+  .pl-pulse:nth-child(2) { border: 1px solid rgba(139,92,246,0.55); }
+  .pl-pulse:nth-child(3) { border: 1px solid rgba(99,102,241,0.4); }
+  @keyframes plCosmicPulse {
+    0%   { transform: translate(-50%, -50%) scale(1);   opacity: 0.85; }
+    60%  { opacity: 0.35; }
+    100% { transform: translate(-50%, -50%) scale(80);  opacity: 0; }
+  }
+
+  /* Cinematic flash overlay */
+  #pl-flash {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center,
+      rgba(251,191,36,0.15) 0%,
+      rgba(139,92,246,0.08) 40%,
+      transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 8;
+  }
+  #pl-flash.on  { opacity: 1; }
+  #pl-flash.off { opacity: 0; transition: opacity 0.5s ease; }
+
+  /* Hero text overlay — sits inside the preloader, children positioned by JS */
+  #pl-hero-mirror {
+    position: absolute;
+    inset: 0;
+    text-align: center;
+    pointer-events: none;
+    z-index: 9;
+  }
+  /* The name, headline — absolutely positioned; JS sets `top` from real hero rects */
+  #pl-hero-mirror .pl-name {
+    position: absolute;
+    left: 50%;
+    font-family: var(--font-display);
+    font-size: clamp(52px, 8vw, 96px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    color: transparent;
+    text-shadow: none;
+    -webkit-text-stroke: 1px rgba(139,92,246,0.15);
+    opacity: 0;
+    transform: translateX(-50%) translateY(16px);
+    transition: opacity 0.55s ease,
+                transform 0.55s ease,
+                color 0.6s ease,
+                -webkit-text-stroke 0.6s ease;
+  }
+  #pl-hero-mirror .pl-name.emerge {
+    opacity: 0.18;
+    transform: translateX(-50%) translateY(-56px);
+    -webkit-text-stroke: 1px rgba(139,92,246,0.4);
+  }
+  #pl-hero-mirror .pl-name.materialize {
+    opacity: 1;
+    background: linear-gradient(135deg,#FFD166 0%,#FBBF24 35%,#F59E0B 70%,#FFD166 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    -webkit-text-stroke: 0px transparent;
+    text-shadow:
+      0 0 12px rgba(251,191,36,0.55),
+      0 0 24px rgba(251,191,36,0.35),
+      0 0 48px rgba(251,191,36,0.18);
+    animation: goldShimmer 2s ease-in-out infinite;
+  }
+
+  @keyframes goldShimmer {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(1.18); }
+    100% { filter: brightness(1); }
+  }
+  #pl-hero-mirror .pl-headline {
+    position: absolute;
+    left: 50%;
+    font-size: clamp(18px, 2.8vw, 26px);
+    font-weight: 300;
+    color: transparent;
+    max-width: 680px;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    text-align: center;
+    opacity: 0;
+    transform: translateX(-50%) translateY(35px);
+    transition: opacity 0.5s ease 0.1s,
+                transform 0.5s ease 0.1s,
+                color 0.5s ease 0.1s;
+  }
+  #pl-hero-mirror .pl-headline.emerge {
+    opacity: 0.12;
+    transform: translateX(-50%) translateY(-31px);
+  }
+  #pl-hero-mirror .pl-headline.materialize {
+    opacity: 1;
+    color: var(--text-secondary);
+  }
+  #pl-hero-mirror .pl-gradient-word {
+    background: linear-gradient(135deg, #A78BFA 0%, #818CF8 40%, #6366F1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Keep body scroll-locked until preloader exits */
+  body.preloading { overflow: hidden; }
+
+  /* Mobile nav icon fix */
+  .hamburger .icon-open,
+  .hamburger .icon-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity var(--transition), transform var(--transition);
+  }
+  .hamburger .icon-close {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+    font-size: 22px;
+    color: var(--text-primary);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .hamburger { position: relative; }
+  .hamburger.is-open .icon-open { opacity: 0; transform: scale(0.7); }
+  .hamburger.is-open .icon-close {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    pointer-events: auto;
+  }
 </style>
 </head>
-<body>
+<body class="preloading">
 <div id="cursor-glow" aria-hidden="true"></div>
+
+<!-- PRELOADER V3 — COSMIC SYSTEM GENESIS -->
+<div id="preloader" role="status" aria-label="Loading portfolio" aria-live="polite">
+  <!-- Full-screen canvas: Canvas API renders the constellation network -->
+  <canvas id="pl-canvas" aria-hidden="true"></canvas>
+
+  <!-- Cinematic vignette warp — gravitational lensing at edges -->
+  <canvas id="pl-vignette-warp" aria-hidden="true"></canvas>
+
+  <!-- Cinematic flash overlay -->
+  <div id="pl-flash" aria-hidden="true"></div>
+
+  <!-- Pulse rings (indigo/violet signals) -->
+  <div class="pl-pulse" aria-hidden="true"></div>
+  <div class="pl-pulse" aria-hidden="true"></div>
+  <div class="pl-pulse" aria-hidden="true"></div>
+
+  <!-- Gold energy core -->
+  <div id="pl-core" aria-hidden="true"></div>
+
+  <!-- Hero mirror: text that materialises then becomes the real hero -->
+  <div id="pl-hero-mirror" aria-hidden="true">
+    <div class="pl-name" id="pl-name" >Welcome!</div>
+    <div class="pl-headline" id="pl-headline">
+      <br>
+      <span class="pl-gradient-word">Kishore Kumar R - Portfolio</span>
+    </div>
+  </div>
+</div>
 
 <!-- NAV -->
 <nav id="navbar" aria-label="Primary navigation">
@@ -373,7 +650,14 @@
       Get in touch
     </a>
     <button class="hamburger" id="hamburger-btn" aria-label="Open menu" aria-expanded="false">
-      <span></span><span></span><span></span>
+      <span class="icon-open">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+          <rect y="4"  width="22" height="2" rx="1" fill="currentColor"/>
+          <rect y="10" width="22" height="2" rx="1" fill="currentColor"/>
+          <rect y="16" width="22" height="2" rx="1" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="icon-close" aria-hidden="true">&#x2715;</span>
     </button>
   </div>
 </nav>
@@ -440,30 +724,31 @@
         </h2>
         <div class="about-text-block">
           <p class="reveal reveal-delay-2">
-            I'm a <strong>Computer Science and Engineering student</strong> at Kalasalingam Academy of Research and Education, graduating in 2026 with a CGPA of 7.96. I build systems that operate at the boundary where software meets real-world consequence — emergency medical infrastructure, intelligent navigation, and safety-critical object detection.
+            I'm a <strong>Computer Science and Engineering student</strong> at Kalasalingam Academy of Research and Education, graduating in 2026 with a CGPA of 7.96. I'm passionate about building software that solves practical problems and creates real-world value. My interests span full-stack development, intelligent systems, and technologies that improve everyday experiences through automation and data-driven decision making.
           </p>
           <p class="reveal reveal-delay-3">
-            My engineering philosophy is simple: <strong>write code that does something that matters.</strong> Every project I've shipped has a measurable outcome — a 92% NLP accuracy score, sub-2-second routing, real-time collision alerts. I don't just write features; I architect systems with reliability and impact in mind.
+            My engineering philosophy is simple: <strong>write code that does something that matters.</strong> I enjoy turning ideas into reliable software, combining technical problem-solving with thoughtful design to create solutions that are practical, scalable, and impactful.
+
           </p>
           <p class="reveal reveal-delay-4">
-            Beyond the keyboard, I've taken my work to IEEE conferences, national hackathon grand finales, and research stages — including <strong>IIT Madras</strong>. I believe the best engineers are both builders and communicators.
+            Beyond the keyboard, I've taken my work to IEEE conferences, hackathon grand finales, and research stages, including <strong>IIT Madras</strong>. Each experience has played a meaningful role in shaping my growth as an engineer.
           </p>
         </div>
         <div class="about-stats">
           <div class="stat-card reveal reveal-delay-2">
             <div class="stat-number gradient-text">3</div>
-            <div class="stat-label">Production Projects</div>
+            <div class="stat-label">Major Projects</div>
           </div>
           <div class="stat-card reveal reveal-delay-3">
-            <div class="stat-number gradient-text">92%</div>
-            <div class="stat-label">NLP Model Accuracy</div>
+            <div class="stat-number gradient-text">8+</div>
+            <div class="stat-label">Projects Built</div>
           </div>
           <div class="stat-card reveal reveal-delay-4">
             <div class="stat-number gradient-text">1</div>
             <div class="stat-label">IEEE Publication</div>
           </div>
           <div class="stat-card reveal reveal-delay-5">
-            <div class="stat-number gradient-text">5</div>
+            <div class="stat-number gradient-text">5+</div>
             <div class="stat-label">Certifications</div>
           </div>
         </div>
@@ -472,22 +757,22 @@
         <div class="about-card reveal reveal-delay-1">
           <div class="about-card-icon" aria-hidden="true">🧠</div>
           <h4>Systems Thinking</h4>
-          <p>I approach every problem at the architecture level — mapping data flows, failure modes, and integration points before writing a line of code.</p>
+          <p>I approach every problem at the architecture level. Mapping data flows, failure modes, and integration points before writing a line of code.</p>
         </div>
         <div class="about-card reveal reveal-delay-2">
           <div class="about-card-icon" aria-hidden="true">⚡</div>
           <h4>Full-Stack Fluency</h4>
-          <p>From ASP.NET Core backends to React frontends, Flask ML APIs to MySQL schemas — I own the entire stack and don't treat any layer as a black box.</p>
+          <p>From ASP.NET Core backends to React frontends, Flask ML APIs to MySQL schemas, I own the entire stack and don't treat any layer as a black box.</p>
         </div>
         <div class="about-card reveal reveal-delay-3">
           <div class="about-card-icon" aria-hidden="true">🔬</div>
           <h4>Research Disposition</h4>
-          <p>My work on Medipath was accepted at APCIT-2025 (IEEE) and indexed in IEEE Xplore — a testament to rigorous, publication-quality engineering.</p>
+          <p>My work on Medipath was accepted at APCIT-2025 (IEEE) and indexed in IEEE Xplore, marking an important milestone in my research and development journey.</p>
         </div>
         <div class="about-card reveal reveal-delay-4">
           <div class="about-card-icon" aria-hidden="true">🌐</div>
           <h4>API-First Mindset</h4>
-          <p>Every system I build is designed for integration. REST APIs, third-party services, real-time data pipelines — I build connective tissue between systems.</p>
+          <p>Many of my projects involve integrating APIs, external services, and real-time data sources. I enjoy designing systems that communicate efficiently and work together as a cohesive whole.</p>
         </div>
       </div>
     </div>
@@ -502,7 +787,7 @@
     <div class="skills-header">
       <div class="section-eyebrow reveal">Skills</div>
       <h2 class="section-title reveal reveal-delay-1" id="skills-title">Technical Toolkit</h2>
-      <p class="section-subtitle reveal reveal-delay-2">A cross-stack command of modern technologies — from infrastructure to intelligent systems.</p>
+      <p class="section-subtitle reveal reveal-delay-2">A cross-stack foundation in modern technologies, built through hands-on projects and continuous learning.</p>
     </div>
     <div class="skills-grid">
       <div class="skill-category reveal reveal-delay-1">
@@ -607,7 +892,7 @@
     <div class="projects-header">
       <div class="section-eyebrow reveal">Featured Projects</div>
       <h2 class="section-title reveal reveal-delay-1" id="projects-title">Systems Built to<br><em class="gradient-text" style="font-style:normal;">Solve Real Problems</em></h2>
-      <p class="section-subtitle reveal reveal-delay-2">Every project below was designed with a specific real-world problem in mind — from emergency healthcare logistics to intelligent navigation and computer vision safety systems.</p>
+      <p class="section-subtitle reveal reveal-delay-2">Every project below was designed with a specific real-world problem in mind, from emergency healthcare logistics to intelligent navigation and computer vision safety systems.</p>
     </div>
     <div class="projects-list">
 
@@ -621,7 +906,7 @@
             </div>
             <h3 class="project-title" id="project1-title">Medipath: Intelligent Emergency Medical Service System</h3>
             <p class="project-description">
-              A full-stack healthcare coordination platform that integrates patients, hospitals, and ambulance services in real time. Built with a React frontend, ASP.NET Core Web API backend, and a Flask-powered NLP microservice — this system reduces emergency response overhead by providing instant symptom-based routing, hospital capacity awareness, and intelligent ambulance dispatch. Every layer of the stack was designed with fault tolerance and sub-second response in mind.
+              A full-stack healthcare coordination platform that integrates patients, hospitals, and ambulance services in real time. Built with a React frontend, ASP.NET Core Web API backend, and a Flask-powered NLP microservice, this system reduces emergency response overhead by providing instant symptom-based routing, hospital capacity awareness, and intelligent ambulance dispatch. Every layer of the stack was designed with fault tolerance and sub-second response in mind.
             </p>
             <div class="project-metrics" aria-label="Project metrics">
               <div class="metric">
@@ -678,7 +963,7 @@
             </div>
             <div class="project-detail-card">
               <h5>Solution</h5>
-              <p>Unified platform with NLP-powered symptom triage, live hospital capacity tracking, and intelligent ambulance routing — all under 2 seconds via OSRM and REST APIs.</p>
+              <p>Unified platform with NLP-powered symptom triage, live hospital capacity tracking, and intelligent ambulance routing, all under 2 seconds via OSRM and REST APIs.</p>
             </div>
             <div class="project-detail-card">
               <h5>Recognition</h5>
@@ -698,7 +983,7 @@
             </div>
             <h3 class="project-title" id="project2-title">E-Bike Navigation with Intelligent Parking Assistance</h3>
             <p class="project-description">
-              A mobile-first web platform that transforms e-bike commuting with real-time routing, weather-aware recommendations, and in-browser ML-powered obstacle detection — no server required for inference. By running TensorFlow.js + COCO-SSD directly on-device, the system identifies nearby vehicles and pedestrians in real time and triggers voice alerts. Four distinct external APIs are orchestrated seamlessly behind a single cohesive interface.
+              A mobile-first web platform that transforms e-bike commuting with real-time routing, weather-aware recommendations, and in-browser ML-powered obstacle detection. No server required for inference. By running TensorFlow.js + COCO-SSD directly on-device, the system identifies nearby vehicles and pedestrians in real time and triggers voice alerts. Four distinct external APIs are orchestrated seamlessly behind a single cohesive interface.
             </p>
             <div class="project-metrics" aria-label="Project metrics">
               <div class="metric">
@@ -758,7 +1043,7 @@
             </div>
             <div class="project-detail-card">
               <h5>Engineering Challenge</h5>
-              <p>Running COCO-SSD object detection in real time on mobile browsers without degrading the map UI — solved through requestAnimationFrame throttling and canvas compositing.</p>
+              <p>Running COCO-SSD object detection in real time on mobile browsers without degrading the map UI. Solved through requestAnimationFrame throttling and canvas compositing.</p>
             </div>
           </div>
         </div>
@@ -774,7 +1059,7 @@
             </div>
             <h3 class="project-title" id="project3-title">Real-Time Object Collision Detection with Telegram Alerts</h3>
             <p class="project-description">
-              A safety-critical computer vision surveillance system that processes live webcam input to detect objects, estimate collision risk in real time, and dispatch instant alerts via Telegram Bot API — complete with captured images and location data. Built for environments where speed and reliability are non-negotiable: industrial monitoring, smart vehicle systems, and autonomous safety applications.
+              A safety-critical computer vision surveillance system that processes live webcam input to detect objects, estimate collision risk in real time, and dispatch instant alerts via Telegram Bot API, complete with captured images and location data. Built for environments where speed and reliability are non-negotiable: industrial monitoring, smart vehicle systems, and autonomous safety applications.
             </p>
             <div class="project-metrics" aria-label="Project metrics">
               <div class="metric">
@@ -825,11 +1110,11 @@
             </div>
             <div class="project-detail-card">
               <h5>Solution</h5>
-              <p>Python + OpenCV pipeline with real-time object detection, trajectory risk scoring, and image capture — piped instantly to Telegram with zero cloud infrastructure overhead.</p>
+              <p>Python + OpenCV pipeline with real-time object detection, trajectory risk scoring, and image capture piped instantly to Telegram with zero cloud infrastructure overhead.</p>
             </div>
             <div class="project-detail-card">
               <h5>Engineering Challenge</h5>
-              <p>Minimising false-positive alerts while maintaining near-zero detection latency on standard hardware — solved through bounding-box proximity thresholding and frame-delta analysis.</p>
+              <p>Minimising false-positive alerts while maintaining near-zero detection latency on standard hardware, solved through bounding-box proximity thresholding and frame-delta analysis.</p>
             </div>
           </div>
         </div>
@@ -858,10 +1143,10 @@
             <div class="leadership-subtitle">Kalasalingam Academy of Research and Education · 2024</div>
           </div>
           <p class="leadership-desc">
-            Served as Blender Head of Frames24 — the 3D design and creative technology division of the club at Kalasalingam Academy of Research and Education. Took technical ownership of all Blender-based work, guiding members through 3D modelling pipelines, rendering workflows, and creative execution under deadline. Beyond individual contribution, the role demanded mentoring peers with varying skill levels, making complex 3D concepts accessible and actionable for the team.
+            Served as Blender Head of Frames24. The 3D design and creative technology division of the club at Kalasalingam Academy of Research and Education. Took technical ownership of all Blender-based work, guiding members through 3D modelling pipelines, rendering workflows, and creative execution under deadline. Beyond individual contribution, the role demanded mentoring peers with varying skill levels, making complex 3D concepts accessible and actionable for the team.
           </p>
           <p class="leadership-desc" style="margin-bottom: 28px;">
-            Led the club team at the <strong style="color: var(--text-primary);">AR/VR Challenge at Euphoria 2024</strong> — a multi-college techno management fest — as Team Leader. Coordinated creative direction, delegated modelling tasks, and managed time-critical 3D execution while representing the club under evaluation by university officials. The team secured <strong style="color: var(--text-primary);">Second Prize and a cash award of ₹5,000</strong>.
+            Led the club team at the <strong style="color: var(--text-primary);">AR/VR Challenge at Euphoria 2024</strong>. A multi-college techno management fest, as Team Leader. Coordinated creative direction, delegated modelling tasks, and managed time-critical 3D execution while representing the club under evaluation by university officials. The team secured <strong style="color: var(--text-primary);">Second Prize and a cash award of ₹5,000</strong>.
           </p>
           <div class="leadership-pillars" aria-label="Leadership qualities demonstrated">
             <div class="leadership-pillar"><div class="leadership-pillar-dot" aria-hidden="true"></div><span>Team Leadership</span></div>
@@ -891,7 +1176,7 @@
           <div class="leadership-highlight">
             <span class="leadership-highlight-icon" aria-hidden="true">🎨</span>
             <h4>3D Technical Direction</h4>
-            <p>Led all Blender-based creative work — from concept modelling to final render — ensuring technical quality met competitive evaluation standards.</p>
+            <p>Led all Blender-based creative work from concept modelling and model sculpting to final render. Ensuring technical quality met competitive evaluation standards.</p>
           </div>
           <div class="leadership-highlight">
             <span class="leadership-highlight-icon" aria-hidden="true">👥</span>
@@ -918,7 +1203,7 @@
   <div class="container">
     <div class="section-eyebrow reveal">Achievements</div>
     <h2 class="section-title reveal reveal-delay-1" id="achievements-title">Recognition Beyond<br><em class="gradient-text" style="font-style:normal;">the Repository</em></h2>
-    <p class="section-subtitle reveal reveal-delay-2">From IEEE publication to national-stage hackathons — building in public and being recognised for it.</p>
+    <p class="section-subtitle reveal reveal-delay-2">From IEEE publication to competitive hackathons. Continuously learning, building, and growing through every experience.</p>
     <div class="achievements-grid">
       <div class="achievement-card reveal reveal-delay-1">
         <span class="achievement-rank rank-ieee">
@@ -926,7 +1211,7 @@
           IEEE Published
         </span>
         <div class="achievement-icon" aria-hidden="true">📄</div>
-        <div class="achievement-title">Research Publication — APCIT-2025, IEEE Xplore</div>
+        <div class="achievement-title">Research Publication, APCIT-2025, IEEE Xplore</div>
         <p class="achievement-desc">Presented and published "Medipath: An Intelligent Emergency Medical Service System with NLP and Real-Time Coordination" at APCIT-2025, now indexed in IEEE Xplore.</p>
         <div class="achievement-glow" style="background: radial-gradient(circle, #6366F1, transparent);" aria-hidden="true"></div>
       </div>
@@ -938,7 +1223,7 @@
         </span>
         <div class="achievement-icon" aria-hidden="true">🏆</div>
         <div class="achievement-title">IEEE Smart Kare Hackathon Grand Finale</div>
-        <p class="achievement-desc">Reached the Grand Finale of the IEEE Smart Kare Hackathon — a healthcare innovation challenge organised by IEEE at Kalasalingam Academy of Research and Education, 2025.</p>
+        <p class="achievement-desc">Reached the Grand Finale of the IEEE Smart Kare Hackathon, A healthcare innovation challenge organised by IEEE at Kalasalingam Academy of Research and Education, 2025.</p>
         <div class="achievement-glow" style="background: radial-gradient(circle, #FBB724, transparent);" aria-hidden="true"></div>
       </div>
       <div class="achievement-card reveal reveal-delay-3">
@@ -947,8 +1232,8 @@
           IIT Madras
         </span>
         <div class="achievement-icon" aria-hidden="true">🎯</div>
-        <div class="achievement-title">IndustiAI 24-Hour Hackathon — Shaastra, IIT Madras</div>
-        <p class="achievement-desc">Competed in the IndustiAI 24-Hour Hackathon organised by Shaastra at IIT Madras — January 2025. One of India's most competitive student-run technical festivals.</p>
+        <div class="achievement-title">IndustiAI 24-Hour Hackathon - Shaastra, IIT Madras</div>
+        <p class="achievement-desc">Competed in the IndustiAI 24-Hour Hackathon organised by Shaastra at IIT Madras - January 2025. One of India's most competitive student-run technical festivals.</p>
         <div class="achievement-glow" style="background: radial-gradient(circle, #22C55E, transparent);" aria-hidden="true"></div>
       </div>
     </div>
@@ -1059,18 +1344,22 @@
     <h2 class="section-title reveal reveal-delay-1" id="contact-title">Let's Build Something<br><em class="gradient-text" style="font-style:normal;">Worth Shipping</em></h2>
     <div class="contact-inner">
       <div class="contact-left reveal reveal-delay-2">
-        <p>I'm actively looking for full-time software engineering roles and interesting internship opportunities. If you're working on products that sit at the intersection of software and real-world impact — I'd love to talk.</p>
+        <p>I'm actively looking for full-time software engineering roles, web development roles and interesting internship opportunities. If you're working on products that sit at the intersection of software and real-world impact, I'd love to talk.</p>
         <!-- PART 4B: Correct email with subject -->
         <a href="mailto:kishorekumarrs018@gmail.com?subject=Portfolio%20Inquiry" class="contact-email-link" aria-label="Send email to Kishore Kumar R">
           kishorekumarrs018@gmail.com
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
         </a>
-        <p style="margin-top: 32px; font-size: 14px; color: var(--text-muted);">Based in Madurai, Tamil Nadu &nbsp;·&nbsp; Open to remote &amp; on-site</p>
+        <p style="margin-top: 32px; font-size: 14px; color: var(--text-muted);">Currently in Madurai, Tamil Nadu &nbsp;·&nbsp; Open to Remote, Hybrid, On-Site &amp; Relocation Opportunities</p>
         <!-- PART 6: Resume download in contact too -->
-        <div style="margin-top: 32px;">
+        <div style="margin-top: 32px; display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
           <a href="Kishore_Kumar_R_Resume.pdf" download="Kishore_Kumar_R_Resume.pdf" class="btn-secondary" style="font-size:13.5px; padding:11px 22px;" aria-label="Download Kishore Kumar R resume PDF">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download Resume
+            Download Resume<span style="font-size:10.5px;opacity:0.55;font-weight:400;letter-spacing:0.02em;margin-left:5px;">332 KB</span>
+          </a>
+          <a href="Kishore_Kumar_R_Resume.pdf" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size:13.5px; padding:11px 22px;" aria-label="View Kishore Kumar R resume PDF in browser">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            View Resume<span style="font-size:10.5px;opacity:0.55;font-weight:400;letter-spacing:0.02em;margin-left:5px;">332 KB</span>
           </a>
         </div>
       </div>
@@ -1143,6 +1432,578 @@
 </footer>
 
 <script>
+/* =============================================================
+   PRELOADER V3 — COSMIC SYSTEM GENESIS
+   Canvas-based constellation network with identity emergence.
+
+   TIMELINE (ms):
+     0      Black screen + gold core scale-in begins
+     300    Core alive
+     600    Star nodes scatter across full viewport
+     1000   Constellation connections draw intelligently
+     1600   Name shadow-form emerges from the network
+     1900   Core begins expanding · flash fires
+     2100   Network dissolves · hero text materialises
+            → SINGLE PULSE fires (3 rings, 100ms stagger) as text appears
+     2300   Vignette warp activates · reading hold begins
+     3300   Reading hold ends (1.2s) · premium exit sequence begins
+     3500   Step 2: Constellation fades
+     3700   Step 3: Core dims further
+     4100   Step 5: Preloader layer dissolves (opacity → 0 over 1.6s)
+     5900   Step 6: Preloader removed from DOM
+   ============================================================= */
+(function () {
+  'use strict';
+
+  /* ── DOM refs ── */
+  var preloader    = document.getElementById('preloader');
+  var canvas       = document.getElementById('pl-canvas');
+  var ctx          = canvas.getContext('2d');
+  var vigCanvas    = document.getElementById('pl-vignette-warp');
+  var vigCtx       = vigCanvas ? vigCanvas.getContext('2d') : null;
+  var coreEl       = document.getElementById('pl-core');
+  var flashEl      = document.getElementById('pl-flash');
+  var pulseEls     = document.querySelectorAll('.pl-pulse');
+  var plName       = document.getElementById('pl-name');
+  var plHeadline   = document.getElementById('pl-headline');
+
+  /* ── POSITION MIRROR: read real hero element positions, apply to preloader ──
+     This guarantees pixel-perfect alignment when the preloader fades out.
+     We read the hero DOM directly and set matching `top` values on the mirror.
+  */
+  (function alignMirrorToHero() {
+    var heroName     = document.querySelector('.hero-name');
+    var heroHeadline = document.querySelector('.hero-headline');
+
+    if (!heroName || !heroHeadline) return;
+
+    /* getBoundingClientRect gives viewport-relative positions, which is
+       exactly what we need since the preloader is fixed/inset:0 */
+    var nameRect     = heroName.getBoundingClientRect();
+    var headlineRect = heroHeadline.getBoundingClientRect();
+
+    /* Set top of each mirror element to match the real element's top edge */
+    plName.style.top     = nameRect.top     + 'px';
+    plHeadline.style.top = headlineRect.top + 'px';
+  })();
+
+  /* ── colour palette ── */
+  var GOLD_BRIGHT = 'rgba(251,191,36,';
+  var GOLD_MID    = 'rgba(245,158,11,';
+  var INDIGO      = 'rgba(99,102,241,';
+  var VIOLET      = 'rgba(139,92,246,';
+  var BLUE        = 'rgba(96,165,250,';
+  var WHITE       = 'rgba(240,239,248,';
+
+  /* ── state ── */
+  var W, H, CX, CY;
+  var nodes        = [];
+  var connections  = [];
+  var rafId        = null;
+  var phase        = 0;      // 0=init, 1=nodes, 2=connect, 3=dissolve, 4=exit-dissolve
+  var nodesReady   = false;
+  var connectStart = 0;
+  var dissolveStart= 0;
+  var dissolveAlpha= 1;
+  var exitDissolveStart = 0;   // for step-2 canvas fade during exit
+  var exitDissolving    = false;
+
+  /* ── vignette warp state ── */
+  var vigPhase      = 0;   // 0=off, 1=building, 2=holding, 3=relaxing
+  var vigBuildStart = 0;
+  var vigWarpTime   = 0;   // running clock for spatial motion
+  var vigRafId      = null;
+
+  /* ── resize ── */
+  function resize() {
+    W  = canvas.width  = window.innerWidth;
+    H  = canvas.height = window.innerHeight;
+    CX = W / 2;
+    CY = H / 2;
+    if (vigCanvas) {
+      vigCanvas.width  = window.innerWidth;
+      vigCanvas.height = window.innerHeight;
+      /* size and position to match preloader */
+      vigCanvas.style.position = 'absolute';
+      vigCanvas.style.inset = '0';
+      vigCanvas.style.width  = '100%';
+      vigCanvas.style.height = '100%';
+    }
+  }
+  resize();
+  window.addEventListener('resize', function () { resize(); }, { passive: true });
+
+  /* ── node generation ──
+     We seed nodes across the full viewport using a mixture of:
+       1. A geometric core cluster near centre (precision layer)
+       2. Mid-ring nodes forming constellation shapes
+       3. Edge / deep-space nodes (farther, dimmer, smaller)
+     This produces the "observed from space" depth illusion.
+  */
+  function generateNodes() {
+    nodes = [];
+
+    /* --- CORE CLUSTER: tight geometric polygon near centre --- */
+    var coreAngles = [0, 60, 120, 180, 240, 300];
+    var coreR = Math.min(W, H) * 0.09;
+    coreAngles.forEach(function (deg) {
+      var rad = deg * Math.PI / 180;
+      nodes.push({
+        x:      CX + Math.cos(rad) * coreR,
+        y:      CY + Math.sin(rad) * coreR,
+        r:      2.2,
+        bright: 1.0,
+        layer:  0,
+        alpha:  0,
+        targetAlpha: 1.0,
+        twinkleOffset: Math.random() * Math.PI * 2,
+        type:   'core'
+      });
+    });
+    /* inner hexagon vertex — smaller tight ring */
+    var innerAngles = [30, 90, 150, 210, 270, 330];
+    var innerR = coreR * 0.48;
+    innerAngles.forEach(function (deg) {
+      var rad = deg * Math.PI / 180;
+      nodes.push({
+        x:      CX + Math.cos(rad) * innerR,
+        y:      CY + Math.sin(rad) * innerR,
+        r:      1.6,
+        bright: 0.85,
+        layer:  0,
+        alpha:  0,
+        targetAlpha: 0.85,
+        twinkleOffset: Math.random() * Math.PI * 2,
+        type:   'inner'
+      });
+    });
+
+    /* --- MID RING: constellation shapes, intelligently placed --- */
+    var midR1 = Math.min(W, H) * 0.22;
+    var midR2 = Math.min(W, H) * 0.33;
+    var midSeeds = [
+      { r: midR1, deg: 30  }, { r: midR1 * 1.1, deg: 55  }, { r: midR1 * 0.9, deg: 10  },
+      { r: midR1, deg: 210 }, { r: midR1 * 1.1, deg: 235 }, { r: midR1 * 0.85, deg: 190 },
+      { r: midR2, deg: 130 }, { r: midR2 * 1.1, deg: 155 }, { r: midR2 * 0.9, deg: 115 }, { r: midR2 * 1.05, deg: 140 },
+      { r: midR2, deg: 310 }, { r: midR2 * 0.95, deg: 335 }, { r: midR2 * 1.08, deg: 290 },
+      { r: midR1 * 1.4, deg: 90  },
+      { r: midR1 * 1.4, deg: 270 },
+      { r: midR2 * 1.2, deg: 0   },
+      { r: midR2 * 1.1, deg: 180 }
+    ];
+    midSeeds.forEach(function (seed) {
+      var jitter = midR1 * 0.06;
+      var rad = seed.deg * Math.PI / 180;
+      var bright = 0.55 + Math.random() * 0.4;
+      nodes.push({
+        x:      CX + Math.cos(rad) * seed.r + (Math.random() - 0.5) * jitter,
+        y:      CY + Math.sin(rad) * seed.r + (Math.random() - 0.5) * jitter,
+        r:      1.1 + Math.random() * 0.9,
+        bright: bright,
+        layer:  1,
+        alpha:  0,
+        targetAlpha: bright,
+        twinkleOffset: Math.random() * Math.PI * 2,
+        type:   'mid'
+      });
+    });
+
+    /* --- DEEP SPACE: scattered dim stars across full viewport --- */
+    var edgeCount = Math.max(18, Math.floor((W * H) / 22000));
+    for (var i = 0; i < edgeCount; i++) {
+      var x, y, distSq;
+      var minClearSq = Math.pow(Math.min(W, H) * 0.08, 2);
+      do {
+        x = Math.random() * W;
+        y = Math.random() * H;
+        distSq = Math.pow(x - CX, 2) + Math.pow(y - CY, 2);
+      } while (distSq < minClearSq);
+
+      var bright2 = 0.12 + Math.random() * 0.35;
+      nodes.push({
+        x:      x,
+        y:      y,
+        r:      0.5 + Math.random() * 0.8,
+        bright: bright2,
+        layer:  2,
+        alpha:  0,
+        targetAlpha: bright2,
+        twinkleOffset: Math.random() * Math.PI * 2,
+        type:   'deep'
+      });
+    }
+  }
+
+  /* ── connection graph ── */
+  function generateConnections() {
+    connections = [];
+    var maxDeg = { 0: 5, 1: 3, 2: 1 };
+    var thresholds = { 0: Math.min(W, H) * 0.16, 1: Math.min(W, H) * 0.18, 2: Math.min(W, H) * 0.10 };
+    var degrees = nodes.map(function () { return 0; });
+
+    for (var i = 0; i < nodes.length; i++) {
+      for (var j = i + 1; j < nodes.length; j++) {
+        var a = nodes[i], b = nodes[j];
+        if (Math.abs(a.layer - b.layer) > 1) continue;
+        var maxLayer = Math.max(a.layer, b.layer);
+        var thresh = thresholds[maxLayer];
+        var dist = Math.hypot(b.x - a.x, b.y - a.y);
+        if (dist > thresh) continue;
+        if (degrees[i] >= maxDeg[a.layer]) continue;
+        if (degrees[j] >= maxDeg[b.layer]) continue;
+        if (Math.random() > (1 - dist / thresh) * 0.9) continue;
+        var opacity = (1 - dist / thresh) * 0.45 * Math.min(a.bright, b.bright);
+        connections.push({
+          a:     i,
+          b:     j,
+          alpha: 0,
+          targetAlpha: opacity,
+          drawn: 0,
+          len:   dist
+        });
+        degrees[i]++;
+        degrees[j]++;
+      }
+    }
+  }
+
+  /* ── draw frame ── */
+  var tweenStart = 0;
+
+  function draw(ts) {
+    ctx.clearRect(0, 0, W, H);
+
+    /* PHASE 1 (0–800ms): nodes scatter in */
+    if (phase >= 1) {
+      var nodeProgress = Math.min(1, (ts - tweenStart) / 800);
+      nodes.forEach(function (node, i) {
+        var delay = (i / nodes.length) * 0.6;
+        var p = Math.max(0, Math.min(1, (nodeProgress - delay) / 0.4));
+        p = 1 - Math.pow(1 - p, 3);
+
+        /* During exit-dissolve (phase 4), fade nodes out gracefully */
+        var exitFade = 1;
+        if (exitDissolving) {
+          var eEl = Math.max(0, ts - exitDissolveStart);
+          exitFade = Math.max(0, 1 - eEl / 600);
+        }
+
+        node.alpha = node.targetAlpha * p * exitFade;
+
+        var twinkle = 0.85 + 0.15 * Math.sin(ts * 0.001 * 1.5 + node.twinkleOffset);
+        var a = node.alpha * twinkle;
+        if (a < 0.005) return;
+
+        if (node.type === 'core') {
+          ctx.fillStyle = 'rgba(255,245,215,' + a + ')';
+        } else if (node.type === 'inner') {
+          ctx.fillStyle = 'rgba(251,191,36,' + (a * 0.7) + ')';
+        } else if (node.type === 'mid') {
+          if (i % 3 === 0) ctx.fillStyle = 'rgba(165,180,252,' + a + ')';
+          else if (i % 3 === 1) ctx.fillStyle = 'rgba(196,181,253,' + a + ')';
+          else ctx.fillStyle = 'rgba(224,231,255,' + a + ')';
+        } else {
+          ctx.fillStyle = 'rgba(203,213,225,' + (a * 0.7) + ')';
+        }
+
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (node.bright > 0.7 && node.alpha > 0.3) {
+          ctx.save();
+          var grd = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.r * 4);
+          if (node.type === 'core') {
+            grd.addColorStop(0, 'rgba(251,191,36,' + (a * 0.4) + ')');
+          } else {
+            grd.addColorStop(0, 'rgba(139,92,246,' + (a * 0.25) + ')');
+          }
+          grd.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = grd;
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.r * 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      });
+    }
+
+    /* PHASE 2 (connections): animate dash-draw */
+    if (phase >= 2) {
+      var connElapsed = ts - connectStart;
+
+      /* During exit-dissolve, fade connections */
+      var connExitFade = 1;
+      if (exitDissolving) {
+        var ceEl = Math.max(0, ts - exitDissolveStart);
+        connExitFade = Math.max(0, 1 - ceEl / 500);
+      }
+
+      connections.forEach(function (conn, i) {
+        var delay = (i / connections.length) * 700;
+        var p = Math.max(0, Math.min(1, (connElapsed - delay) / 350));
+        p = 1 - Math.pow(1 - p, 2);
+        conn.drawn  = p;
+        conn.alpha  = conn.targetAlpha * p * connExitFade;
+
+        if (conn.alpha < 0.005 || conn.drawn < 0.01) return;
+
+        var a = nodes[conn.a], b = nodes[conn.b];
+        var ex = a.x + (b.x - a.x) * conn.drawn;
+        var ey = a.y + (b.y - a.y) * conn.drawn;
+
+        ctx.save();
+        ctx.strokeStyle = 'rgba(139,92,246,' + conn.alpha + ')';
+        ctx.lineWidth   = 0.65;
+        ctx.setLineDash([3, 5]);
+        ctx.lineDashOffset = -ts * 0.008;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
+        ctx.restore();
+      });
+    }
+
+    /* PHASE 3 (dissolve): fade network canvas */
+    if (phase >= 3 && !exitDissolving) {
+      var dElapsed = ts - dissolveStart;
+      dissolveAlpha = Math.max(0, 1 - dElapsed / 500);
+      ctx.globalAlpha = dissolveAlpha;
+    }
+
+    if (dissolveAlpha > 0 || exitDissolving) {
+      rafId = requestAnimationFrame(draw);
+    } else if (!exitDissolving) {
+      ctx.clearRect(0, 0, W, H);
+    }
+  }
+
+  /* ── VIGNETTE WARP RENDERER ──
+     Draws an extremely subtle gravitational-lens distortion in the outer
+     edge zones only. Centre remains perfectly clear and readable.
+     Uses layered elliptical gradients with a time-varying offset to
+     create the sense of slow spatial movement — like light bending
+     around a massive object.
+  */
+  function drawVignette(ts) {
+    if (!vigCtx) return;
+    vigCtx.clearRect(0, 0, W, H);
+
+    var intensity = 0;
+    var elapsed = ts - vigBuildStart;
+
+    if (vigPhase === 1) {
+      /* build up over 600ms */
+      intensity = Math.min(1, elapsed / 600);
+      intensity = 1 - Math.pow(1 - intensity, 2); /* ease-out */
+    } else if (vigPhase === 2) {
+      /* hold at full intensity */
+      intensity = 1;
+    } else if (vigPhase === 3) {
+      /* relax: intensity fades in the CSS (opacity), warp still draws */
+      intensity = 1;
+    }
+
+    if (intensity < 0.005) {
+      vigRafId = requestAnimationFrame(drawVignette);
+      return;
+    }
+
+    vigWarpTime = ts * 0.0004; /* very slow drift */
+
+    /* ── Primary dark vignette ── */
+    var vgBase = vigCtx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.32,
+                                              W / 2, H / 2, Math.max(W, H) * 0.88);
+    vgBase.addColorStop(0, 'rgba(0,0,0,0)');
+    vgBase.addColorStop(0.65, 'rgba(0,0,0,0)');
+    vgBase.addColorStop(1,    'rgba(0,0,0,' + (0.22 * intensity) + ')');
+    vigCtx.fillStyle = vgBase;
+    vigCtx.fillRect(0, 0, W, H);
+
+    /* ── Subtle warp shimmer at four edge zones ──
+       Each zone pulses with a slow phase-offset sine, creating the
+       impression of spatial curvature without any harsh motion.
+    */
+    var zones = [
+      /* [cx_frac, cy_frac, rx_frac, ry_frac, phase_offset] */
+      [0,    0,    0.5, 0.4, 0],
+      [1,    0,    0.5, 0.4, Math.PI * 0.5],
+      [0,    1,    0.5, 0.4, Math.PI],
+      [1,    1,    0.5, 0.4, Math.PI * 1.5],
+      [0.5,  0,    0.6, 0.3, Math.PI * 0.25],
+      [0.5,  1,    0.6, 0.3, Math.PI * 0.75]
+    ];
+
+    zones.forEach(function (z) {
+      var cx = z[0] * W;
+      var cy = z[1] * H;
+      var rx = z[2] * W;
+      var ry = z[3] * H;
+      var ph = z[4];
+
+      /* oscillating inner radius — creates the "breathing" warp */
+      var breathe = Math.sin(vigWarpTime * 1.8 + ph) * 0.04;
+      var innerFrac = 0.55 + breathe;
+
+      /* very subtle colour fringe — barely perceptible indigo at edges */
+      var fringeAlpha = (0.035 + Math.sin(vigWarpTime * 1.1 + ph) * 0.012) * intensity;
+
+      var wg = vigCtx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry));
+      wg.addColorStop(0,          'rgba(0,0,0,0)');
+      wg.addColorStop(innerFrac,  'rgba(0,0,0,0)');
+      wg.addColorStop(0.82,       'rgba(8,8,20,' + (fringeAlpha * 0.6) + ')');
+      wg.addColorStop(1,          'rgba(12,8,28,' + fringeAlpha + ')');
+
+      vigCtx.save();
+      vigCtx.scale(1, ry / rx);
+      vigCtx.fillStyle = wg;
+      vigCtx.beginPath();
+      vigCtx.arc(cx, cy * (rx / ry), rx, 0, Math.PI * 2);
+      vigCtx.fill();
+      vigCtx.restore();
+    });
+
+    vigRafId = requestAnimationFrame(drawVignette);
+  }
+
+  /* ── ANIMATION SEQUENCE ── */
+
+  /* T=0: start RAF */
+  tweenStart = performance.now();
+  rafId = requestAnimationFrame(draw);
+
+  /* T=300ms: core appears */
+  setTimeout(function () {
+    coreEl.classList.add('alive');
+  }, 300);
+
+  /* T=600ms: scatter nodes */
+  setTimeout(function () {
+    generateNodes();
+    tweenStart = performance.now();
+    phase = 1;
+  }, 600);
+
+  /* T=1000ms: draw connections */
+  setTimeout(function () {
+    generateConnections();
+    connectStart = performance.now();
+    phase = 2;
+  }, 1000);
+
+  /* T=1600ms: name shadow-form emerges */
+  setTimeout(function () {
+    plName.classList.add('emerge');
+    plHeadline.classList.add('emerge');
+  }, 1600);
+
+  /* T=1900ms: core expands + flash */
+  setTimeout(function () {
+    coreEl.classList.add('expanding');
+    flashEl.classList.add('on');
+  }, 1900);
+
+  /* T=2100ms: flash off · network dissolves · text materialises · focus-dim begins */
+  setTimeout(function () {
+    flashEl.classList.remove('on');
+    flashEl.classList.add('off');
+    dissolveStart = performance.now();
+    phase = 3;
+
+    /* Text fully materialises */
+    plName.classList.add('materialize');
+    plHeadline.classList.add('materialize');
+
+    /* SINGLE PULSE — fired once, exactly as text becomes readable.
+       Three rings stagger by 100ms to read as one propagating wavefront,
+       not three separate events. Feels like signal transmission / system
+       initialisation rather than repeated shockwaves. */
+    firePulse(0, 0);
+    firePulse(1, 100);
+    firePulse(2, 200);
+
+    /* Focus mode: reduce core visual dominance so text reads first */
+    setTimeout(function () {
+      coreEl.classList.add('focus-dim');
+    }, 400);
+  }, 2100);
+
+  /* T=2300ms: CHANGE 4 — vignette warp activates during reading hold */
+  setTimeout(function () {
+    vigBuildStart = performance.now();
+    vigPhase = 1;
+    vigRafId = requestAnimationFrame(drawVignette);
+    if (vigCanvas) {
+      vigCanvas.style.opacity = '1';
+    }
+  }, 2300);
+
+  /* T=2700ms: vignette warp reaches hold phase */
+  setTimeout(function () {
+    vigPhase = 2;
+  }, 2700);
+
+  /* T=3300ms: CHANGE 2 — end of 1.2s reading hold · begin CHANGE 5 premium exit sequence */
+
+  /* Step 1 (T=3300ms): vignette warp gently relaxes */
+  setTimeout(function () {
+    vigPhase = 3;
+    if (vigCanvas) {
+      vigCanvas.style.transition = 'opacity 1.4s cubic-bezier(0.4,0,0.2,1)';
+      vigCanvas.style.opacity = '0';
+    }
+  }, 3300);
+
+  /* Step 2 (T=3500ms): constellation fades — begin exit canvas dissolve */
+  setTimeout(function () {
+    exitDissolveStart = performance.now();
+    exitDissolving = true;
+    phase = 4;
+    /* Reset globalAlpha in case phase 3 had it */
+    dissolveAlpha = 1;
+  }, 3500);
+
+  /* Step 3 (T=3700ms): gold core dims further */
+  setTimeout(function () {
+    /* Add an additional softer transition on top of focus-dim */
+    coreEl.style.transition = 'opacity 1.2s ease, box-shadow 1.2s ease, transform 0.6s cubic-bezier(0.4,0,0.2,1)';
+    coreEl.style.opacity = '0.25';
+  }, 3700);
+
+  /* Step 4 (T=3900ms): text stays visible longest — hero section starts becoming visible */
+  /* (text is on top in z-index; the preloader opacity fade handles the reveal) */
+
+  /* Step 5 (T=4100ms): preloader layer begins dissolving (transition is 1.6s per CSS) */
+  setTimeout(function () {
+    preloader.classList.add('pl-exit');
+    document.body.classList.remove('preloading');
+  }, 4100);
+
+  /* Step 6 (T=5900ms): remove preloader from DOM (after 1.6s fade + buffer) */
+  setTimeout(function () {
+    if (preloader && preloader.parentNode) {
+      preloader.parentNode.removeChild(preloader);
+    }
+    if (rafId) cancelAnimationFrame(rafId);
+    if (vigRafId) cancelAnimationFrame(vigRafId);
+  }, 5900);
+
+  /* ── helper: fire a pulse ring ── */
+  function firePulse(index, extraDelay) {
+    var el = pulseEls[index];
+    if (!el) return;
+    setTimeout(function () {
+      el.classList.remove('fire');
+      void el.offsetWidth;
+      el.classList.add('fire');
+    }, extraDelay || 0);
+  }
+
+})();
+</script>
+
+<script>
 (function() {
   // Cursor glow
   var glow = document.getElementById('cursor-glow');
@@ -1167,11 +2028,15 @@
   var mobileClose = document.getElementById('mobile-close');
   hamburger.addEventListener('click', function() {
     mobileMenu.classList.add('open');
+    hamburger.classList.add('is-open');
+    hamburger.setAttribute('aria-label', 'Close menu');
     hamburger.setAttribute('aria-expanded', 'true');
     document.body.style.overflow = 'hidden';
   });
   function closeMobileMenu() {
     mobileMenu.classList.remove('open');
+    hamburger.classList.remove('is-open');
+    hamburger.setAttribute('aria-label', 'Open menu');
     hamburger.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
   }
