@@ -341,20 +341,19 @@
     .nav-links, .nav-cta { display: none; }
     .hamburger { display: flex; }
     .container { padding: 0 16px; }
-    /* Remove the "forehead": switch from centre-justified to top-aligned,
-       pad just enough to clear the fixed nav (~64px) plus a small breath.
-       Bottom padding gives the scroll indicator room to sit inside the viewport. */
+    /* Keep vertical centering but reduce top/bottom padding so the content
+       block sits slightly higher — eliminating the forehead while keeping
+       the scroll indicator visible within the viewport. */
     #hero {
-      padding: 72px 16px 100px;
-      justify-content: flex-start;
+      padding: 80px 16px 120px;
       min-height: 100vh;
     }
-    /* Tighten internal gaps so everything fits in one screen */
+    /* Tighten internal gaps so everything fits comfortably in one screen */
     .hero-badge { margin-bottom: 20px; }
     .hero-headline { margin-bottom: 14px; }
     .hero-subheadline { margin-bottom: 32px; }
-    /* Scroll indicator: nudge up slightly so it clears the browser chrome */
-    .hero-scroll { bottom: 20px; }
+    /* Scroll indicator: keep it well within the viewport */
+    .hero-scroll { bottom: 28px; }
     .project-card { padding: 28px; }
     .education-card { padding: 28px; }
     .leadership-card { padding: 28px; }
@@ -1488,25 +1487,21 @@
 
     if (!heroName || !heroHeadline) return;
 
-    /* getBoundingClientRect gives viewport-relative positions, which is
-       exactly what we need since the preloader is fixed/inset:0 */
     var nameRect     = heroName.getBoundingClientRect();
     var headlineRect = heroHeadline.getBoundingClientRect();
+    var centre       = window.innerHeight / 2;
 
-    /* Set top of each mirror element to match the real element's top edge */
-    plName.style.top     = nameRect.top     + 'px';
-    /* On mobile the headline crowds the gold core because the hero layout
-       compresses vertically. Fix: on narrow viewports anchor it at a fixed
-       distance BELOW viewport centre (where the core lives) instead of
-       tracking the hero headline rect. 80px below centre gives roughly half
-       the gap that "Welcome!" has above it — noticeable but not too far. */
     if (window.innerWidth <= 700) {
-      plHeadline.style.top = (window.innerHeight / 2 + 80) + 'px';
+      /* On mobile: ignore hero DOM positions entirely — they shift with layout.
+         Instead anchor both texts symmetrically around the gold core (viewport centre).
+         "Welcome!" sits ~120px above centre (matching the original feel).
+         "Kishore Kumar R - Portfolio" sits 80px below centre. */
+      plName.style.top     = (centre - 120) + 'px';
+      plHeadline.style.top = (centre + 80)  + 'px';
     } else {
-      /* The original markup had a <br> before the text which pushed it down
-         by one line-height (~39px at clamp(18px,2.8vw,26px) × 1.5).
-         We removed that <br> to fix the mobile single-line bug, so restore
-         the equivalent gap here on desktop only. */
+      /* Desktop: track real hero positions as originally designed */
+      plName.style.top     = nameRect.top + 'px';
+      /* Restore the ~39px gap the removed <br> previously gave on desktop */
       plHeadline.style.top = (headlineRect.top + 39) + 'px';
     }
   })();
