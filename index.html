@@ -192,6 +192,25 @@
   /* .reveal's transition list would otherwise override hover transitions, so this card lists both */
   .experience-card.reveal { transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1), border-color var(--transition), background var(--transition), box-shadow var(--transition); }
   .experience-card:hover { border-color: rgba(139,92,246,0.25); background: var(--bg-card-hover); box-shadow: 0 20px 60px rgba(99,102,241,0.12); }
+  .experience-company-logo {
+    position: absolute;
+    top: 42px;
+    right: 48px;
+    z-index: 2;
+    width: 92px;
+    height: 92px;
+    display: grid;
+    place-items: center;
+    padding: 5px;
+    border-radius: 17px;
+    background: #fff;
+    border: 1px solid rgba(255,255,255,0.72);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.22);
+  }
+  .experience-company-logo img { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 12px; }
+  @media (max-width: 700px) {
+    .experience-company-logo { top: 20px; right: 20px; width: 64px; height: 64px; border-radius: 12px; padding: 3px; }
+  }
   .exp-counter { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 0.16em; font-family: var(--font-display); font-weight: 400; line-height: 1; letter-spacing: -0.03em; margin-bottom: 36px; }
   .exp-count-num { font-size: clamp(92px, 15vw, 148px); }
   .exp-count-unit { font-size: clamp(26px, 4.6vw, 48px); }
@@ -419,6 +438,72 @@
   /* An element that left through the TOP resets upward (away from the viewport), so the reset can never push it back into view and flicker */
   .reveal.reveal-above:not(.visible) { transform: translateY(-28px); }
   @media (prefers-reduced-motion: reduce) { .reveal, .reveal.reveal-above:not(.visible) { opacity: 1; transform: none; transition: none; } * { animation: none !important; transition-duration: 0.01ms !important; } }
+
+
+  /* GALAXY INTERACTION: shared hover/focus treatment for clickable controls */
+  :is(.nav-cta, .btn-primary, .btn-secondary, .project-link, .social-link,
+      .contact-email-link, .hamburger, .mobile-close) {
+    --galaxy-active: 0;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    transform-style: preserve-3d;
+  }
+  :is(.nav-cta, .btn-primary, .btn-secondary, .project-link, .social-link,
+      .contact-email-link, .hamburger, .mobile-close)::before {
+    content: '';
+    position: absolute;
+    inset: -160%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: conic-gradient(from 0deg,
+      transparent 0deg 286deg,
+      rgba(255,255,255,.95) 302deg,
+      rgba(133,160,255,.9) 314deg,
+      rgba(194,126,255,.85) 326deg,
+      transparent 340deg 360deg);
+    animation: galaxy-border-spin 2.8s linear infinite;
+    transition: opacity .25s ease;
+  }
+  :is(.nav-cta, .btn-primary, .btn-secondary, .project-link, .social-link,
+      .contact-email-link, .hamburger, .mobile-close)::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    z-index: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    background:
+      radial-gradient(circle at 18% 28%, rgba(255,255,255,.95) 0 1px, transparent 2px),
+      radial-gradient(circle at 72% 22%, rgba(164,190,255,.9) 0 1px, transparent 2px),
+      radial-gradient(circle at 84% 72%, rgba(226,183,255,.9) 0 1.2px, transparent 2px),
+      radial-gradient(circle at 34% 78%, rgba(255,255,255,.8) 0 1px, transparent 2px),
+      radial-gradient(ellipse at 50% 120%, rgba(112,126,255,.34), transparent 66%);
+    transition: opacity .25s ease;
+  }
+  :is(.nav-cta, .btn-primary, .btn-secondary, .project-link, .social-link,
+      .contact-email-link, .hamburger, .mobile-close):is(:hover, :focus-visible) {
+    --galaxy-active: 1;
+    box-shadow: 0 0 18px rgba(118,133,255,.22), 0 0 34px rgba(172,115,255,.12);
+  }
+  :is(.nav-cta, .btn-primary, .btn-secondary, .project-link, .social-link,
+      .contact-email-link, .hamburger, .mobile-close):is(:hover, :focus-visible)::before,
+  :is(.nav-cta, .btn-primary, .btn-secondary, .project-link, .social-link,
+      .contact-email-link, .hamburger, .mobile-close):is(:hover, :focus-visible)::after {
+    opacity: .9;
+  }
+  :is(.nav-cta, .btn-primary, .btn-secondary, .project-link, .social-link,
+      .contact-email-link, .hamburger, .mobile-close) > * {
+    position: relative;
+    z-index: 1;
+  }
+  @keyframes galaxy-border-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    :is(.nav-cta, .btn-primary, .btn-secondary, .project-link, .social-link,
+        .contact-email-link, .hamburger, .mobile-close)::before { animation: none; }
+  }
 
   /* RESPONSIVE */
   /* Seven nav links + CTA need a tighter bar on narrow desktop/tablet widths */
@@ -719,38 +804,129 @@
     pointer-events: auto;
   }
 </style>
+
+<style id="rebirth-hero-name-glitch">
+/* Hero identity: one-line name, hover-only RGB glitch, and greeting reveal. */
+#hero .hero-name {
+  white-space: nowrap;
+  width: max-content;
+  max-width: 100%;
+  position: relative;
+  isolation: isolate;
+  margin-bottom: 10px;
+  line-height: 1;
+}
+#hero .hero-name-window {
+  display: block;
+  height: 1.08em;
+  overflow: hidden;
+  position: relative;
+}
+#hero .hero-name-track {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: transform 560ms cubic-bezier(.2,.8,.2,1);
+  will-change: transform;
+}
+#hero .hero-name-main,
+#hero .hero-name-greeting {
+  display: block;
+  height: 1.08em;
+  line-height: 1.08;
+  white-space: nowrap;
+}
+#hero .hero-name-main {
+  position: relative;
+  transition: color 220ms ease, text-shadow 220ms ease;
+}
+#hero .hero-name-greeting {
+  color: #b9ccff;
+  font-family: var(--font-body);
+  font-size: .58em;
+  font-weight: 600;
+  letter-spacing: -.045em;
+  text-shadow: 0 0 24px rgba(110,153,255,.32);
+}
+#hero .hero-name-main::before,
+#hero .hero-name-main::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+#hero .hero-name:hover .hero-name-track,
+#hero .hero-name:focus-visible .hero-name-track {
+  transform: translateY(-1.08em);
+}
+#hero .hero-name:hover .hero-name-main,
+#hero .hero-name:focus-visible .hero-name-main {
+  color: rgba(0, 194, 203, 0.2);
+  text-shadow: 0.05em 0 0 #ec2225, -0.025em -0.05em 0 #313f97,
+    0.025em 0.05em 0 #50c878;
+}
+#hero .hero-name:hover .hero-name-main::before,
+#hero .hero-name:hover .hero-name-main::after,
+#hero .hero-name:focus-visible .hero-name-main::before,
+#hero .hero-name:focus-visible .hero-name-main::after { opacity: 0.8; }
+#hero .hero-name:hover .hero-name-main::before,
+#hero .hero-name:focus-visible .hero-name-main::before {
+  color: rgba(236, 34, 37, 0.2);
+  text-shadow: 0.05em 0 0 #ec2225, -0.025em -0.05em 0 #313f97,
+    0.025em 0.05em 0 #50c878;
+  animation: rebirthNameGlitch 650ms infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  transform: translate(-0.025em, -0.0125em);
+}
+#hero .hero-name:hover .hero-name-main::after,
+#hero .hero-name:focus-visible .hero-name-main::after {
+  color: rgba(80, 200, 120, 0.2);
+  text-shadow: 0.05em 0 0 #ec2225, -0.025em -0.05em 0 #313f97,
+    0.025em 0.05em 0 #50c878;
+  animation: rebirthNameGlitch 375ms infinite;
+  clip-path: polygon(0 65%, 100% 20%, 100% 100%, 0 70%);
+  transform: translate(0.0125em, 0.025em);
+}
+@keyframes rebirthNameGlitch {
+  0%, 14% {
+    color: rgba(236, 34, 37, 0.2);
+    text-shadow: 0.05em 0 0 #ec2225, -0.025em -0.05em 0 #313f97,
+      0.025em 0.05em 0 #50c878;
+  }
+  15%, 49% {
+    color: #50c878;
+    text-shadow: -0.05em -0.025em 0 #ec2225, 0.025em -0.025em 0 #313f97,
+      -0.05em -0.05em 0 #50c878;
+  }
+  50%, 99% {
+    color: #313f97;
+    text-shadow: 0.025em 0.05em 0 #ec2225, -0.025em 0.05em 0 #313f97,
+      0 -0.05em 0 #50c878;
+  }
+  100% {
+    text-shadow: -0.025em 0 0 #ec2225, -0.025em -0.025em 0 #313f97,
+      -0.025em -0.05em 0 #50c878;
+  }
+}
+@media (max-width: 560px) {
+  #hero .hero-name { font-size: clamp(24px, 8.5vw, 46px); }
+  #hero .hero-name-greeting { font-size: .52em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #hero .hero-name-track { transition: none; }
+  #hero .hero-name:hover .hero-name-main::before,
+  #hero .hero-name:hover .hero-name-main::after,
+  #hero .hero-name:focus-visible .hero-name-main::before,
+  #hero .hero-name:focus-visible .hero-name-main::after { animation: none; }
+}
+</style>
+
 </head>
-<body class="preloading">
+<body>
 <div id="cursor-glow" aria-hidden="true"></div>
-
-<!-- PRELOADER V3 — COSMIC SYSTEM GENESIS -->
-<div id="preloader" role="status" aria-label="Loading portfolio" aria-live="polite">
-  <!-- Full-screen canvas: Canvas API renders the constellation network -->
-  <canvas id="pl-canvas" aria-hidden="true"></canvas>
-
-  <!-- Cinematic vignette warp — gravitational lensing at edges -->
-  <canvas id="pl-vignette-warp" aria-hidden="true"></canvas>
-
-  <!-- Cinematic flash overlay -->
-  <div id="pl-flash" aria-hidden="true"></div>
-
-  <!-- Pulse rings (indigo/violet signals) -->
-  <div class="pl-pulse" aria-hidden="true"></div>
-  <div class="pl-pulse" aria-hidden="true"></div>
-  <div class="pl-pulse" aria-hidden="true"></div>
-
-  <!-- Gold energy core -->
-  <div id="pl-core" aria-hidden="true"></div>
-
-  <!-- Hero mirror: text that materialises then becomes the real hero -->
-  <div id="pl-hero-mirror" aria-hidden="true">
-    <div class="pl-name" id="pl-name" >Welcome!</div>
-    <div class="pl-headline" id="pl-headline">
-      <br>
-      <span class="pl-gradient-word">Kishore Kumar R - Portfolio</span>
-    </div>
-  </div>
-</div>
 
 <!-- NAV -->
 <nav id="navbar" aria-label="Primary navigation">
@@ -797,16 +973,24 @@
 
 <!-- HERO -->
 <section id="hero" aria-label="Introduction">
+  <canvas id="hero-chromatic-wave" aria-hidden="true"></canvas>
   <div class="hero-bg-glow" aria-hidden="true"></div>
   <div class="hero-content">
     <div class="hero-badge reveal">
       <div class="hero-badge-dot" aria-hidden="true"></div>
       Available for opportunities
     </div>
-    <h1 class="hero-name reveal reveal-delay-1">Kishore Kumar R</h1>
+    <h1 class="hero-name reveal reveal-delay-1" aria-label="Kishore Kumar R">
+      <span class="hero-name-window">
+        <span class="hero-name-track">
+          <span class="hero-name-main" data-text="Kishore Kumar R">Kishore Kumar R</span>
+          <span class="hero-name-greeting" data-text="Hello, visitor ;)">Hello, visitor ;)</span>
+        </span>
+      </span>
+    </h1>
     <p class="hero-headline reveal reveal-delay-2">
-      Designing Reliable Systems at the<br>
-      <em class="gradient-text" style="font-style:normal;">Intersection of Software and Innovation</em>
+      Building Intelligent Software,<br>
+      <em class="gradient-text" style="font-style:normal;">Healthcare Systems, and Experiences That Scale.</em>
     </p>
     <div class="hero-subheadline reveal reveal-delay-3" aria-label="Roles">
       <span class="hero-role-tag">Software Engineer</span>
@@ -827,6 +1011,15 @@
       </a>
     </div>
   </div>
+  <div class="hero-visual" aria-label="Abstract healthcare technology network illustration">
+   <div class="visual-orbit orbit-one"></div><div class="visual-orbit orbit-two"></div>
+   <div class="visual-globe"><div class="globe-grid"></div><div class="globe-core" data-text="KIXO" tabindex="0" role="img" aria-label="KIXO monogram">KIXO</div></div>
+   <span class="tech-node node-health"><i></i> HEALTHCARE</span>
+   <span class="tech-node node-data"><i></i> DATA SYSTEMS</span>
+   <span class="tech-node node-ai"><i></i> AI / ML</span>
+   <span class="tech-node node-cloud"><i></i> CLOUD</span>
+   <svg class="network-lines" viewBox="0 0 520 520" aria-hidden="true"><path d="M260 260 L95 145 L425 115 L455 355 L115 405 L260 260 M95 145 L115 405 M425 115 L115 405 M425 115 L455 355" /></svg>
+  </div>
   <div class="hero-scroll" aria-hidden="true">
     <div class="scroll-line"></div>
     <span>scroll</span>
@@ -839,7 +1032,12 @@
 <section id="experience" aria-labelledby="experience-title">
   <div class="container">
     <div class="section-eyebrow reveal">Experience</div>
+
     <article class="experience-card reveal reveal-delay-1">
+      <div class="experience-company-logo" aria-label="Cognizant company logo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Logo_Cognizant.png"
+             alt="Cognizant logo" loading="lazy" decoding="async" />
+      </div>
       <!-- Dynamic: calculated from the joining date (data-start) by the script below. Static text is the no-JS fallback. -->
       <p class="exp-counter gradient-text" id="exp-counter" data-start="2026-07-07">
         <span class="exp-count-num" id="exp-count-num">3+</span>
@@ -858,6 +1056,17 @@
         </span>
       </div>
     </article>
+  </div>
+  <div class="journey-wrap reveal">
+    <div class="journey-heading"><span class="eyebrow">THE ROAD SO FAR</span><h3>Journey <span class="gradient-text">Timeline</span></h3></div>
+    <div class="journey-track"><div class="journey-progress"></div>
+      <article class="journey-item"><span class="journey-year">2022</span><div class="journey-body"><img class="journey-logo" src="data:image/png;base64,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" alt="Kalasalingam Academy emblem" loading="lazy" decoding="async"><div class="journey-copy"><h4>Started Computer Science</h4><p>Began the B.Tech journey at Kalasalingam Academy of Research and Education.</p></div></div></article>
+      <article class="journey-item"><span class="journey-year">2024</span><div class="journey-body"><img class="journey-logo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Blender_badge.png" alt="Blender logo" loading="lazy" decoding="async"><div class="journey-copy"><h4>Blender Head · Frames24</h4><p>Led 3D creative work and mentored the club team through modelling and AR/VR challenge execution.</p></div></div></article>
+      <article class="journey-item"><span class="journey-year">2025</span><div class="journey-body"><img class="journey-logo" src="https://commons.wikimedia.org/wiki/Special:FilePath/IEEE12010.png" alt="IEEE logo" loading="lazy" decoding="async"><div class="journey-copy"><h4>IEEE Publication</h4><p>Medipath presented at APCIT-2025 and indexed in IEEE Xplore.</p></div></div></article>
+      <article class="journey-item"><span class="journey-year">2025</span><div class="journey-body"><img class="journey-logo" src="https://commons.wikimedia.org/wiki/Special:FilePath/IIT_Madras_header.png" alt="IIT Madras logo" loading="lazy" decoding="async"><div class="journey-copy"><h4>IIT Madras · Shaastra</h4><p>Participated in the IndustiAI 24-hour hackathon.</p></div></div></article>
+      <article class="journey-item"><span class="journey-year">2026</span><div class="journey-body"><img class="journey-logo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Logo_Cognizant.png" alt="Cognizant logo" loading="lazy" decoding="async"><div class="journey-copy"><h4>Cognizant</h4><p>Joined as Programmer Analyst Trainee, working across HPC .NET and Facets.</p></div></div></article>
+      <article class="journey-item journey-next"><span class="journey-year">2027+</span><div class="journey-body"><img class="journey-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgCAYAAACLz2ctAAADHElEQVR4nO3cMU4bQQCGUTtCinKJpEBKByUXSZsOURO6tOkjEdKiHCEXoYQuEkVyiYjKqdyAHQzMzL8z+14JYsbr+Ty7aywvFgAAAAAAAAAAAAAAvVqmH0DS6ubTatvvlgffij83refrwewO+n8RbPOSOFrP15tX6QfQ0nNi6OnvejSLV1rJBd1ld2o9X8+G3wFL7yaPjdd6vt4NHWCtxds2buv5RjBsgLUX7f74recbxZABtlqs9Tyt5xvJkAHSj+HusEbcJe4b6c54mANZLMq96Vsz4lLzjRLhrE/B2xax1uK2nq8Hsw3wsUUvHUXr+XoxTIBPOY3tutiloqgx3yjXusMEuKunRvXSCFvP15shAhxlN3iqEY57iAB39dzdpZe/69GsAmR6BEhU9wGOcB30Er0ff/cB7qq3u9m5XAfOJkCmSYBE7aUfQE/mclpsyQ4IAAAAAOMr/sbq71+rrv85vvb27qz4mH9enxcfM+Hd+2WxbrwRTZQAiRIgUdU/jPDzR+0Z6jj7WH7MXp+LD8f1xrYDEiVAogRIlACJEiBRAiRKgEQJkCgBEiVAogRIlACJEiBRAiRKgEQJkCgBEiVAoqp/JL/mx7mruis/ZLfPRUV2QKIESJQAiSp+Dbjpaxuurx5+XcflxW3pqYv6/rn8mF+/TPuYT073H/zs8Kjc13BsYgckSoBECZAoARIlQKIESJQAiRIgUQIkSoBECZAoARIlQKIESJQAiRIgUQIkSoBECZAoARIlQKIESJQAiRIgUQIkSoBECZAoARIlQKIESJQAiRIgUQIkSoBECZAoARIlQKIESJQAiRIgUQIkSoBECZAoARIlQKIESJQAiRIgUQIkSoBECZAoARIlQKJiAZ6c7qemZoPUejQJ8PBouWwxD2W1WLfoKdguOA3JdWgW4LZXkwiztj3/rc5aey0mecz6Sbi8uA0/kvmYygu/+bXZ9dVq1XrO5zh4c1Z8zJu/58XHrKHlNXvza0A3JNPWen0iNyEinKbEusSuAdcH28speWTJDSF+EyLEHGciAAAAAAAAAAAAAADo1j8Nu8SlcqRntAAAAABJRU5ErkJggg==" alt="Surprise gift" loading="lazy" decoding="async"><div class="journey-copy"><h4>Next chapter</h4><p>Building deeper expertise in enterprise software and intelligent systems.</p></div></div></article>
+    </div>
   </div>
 </section>
 
@@ -1588,577 +1797,7 @@
   </div>
 </footer>
 
-<script>
-/* =============================================================
-   PRELOADER V3 — COSMIC SYSTEM GENESIS
-   Canvas-based constellation network with identity emergence.
 
-   TIMELINE (ms):
-     0      Black screen + gold core scale-in begins
-     300    Core alive
-     600    Star nodes scatter across full viewport
-     1000   Constellation connections draw intelligently
-     1600   Name shadow-form emerges from the network
-     1900   Core begins expanding · flash fires
-     2100   Network dissolves · hero text materialises
-            → SINGLE PULSE fires (3 rings, 100ms stagger) as text appears
-     2300   Vignette warp activates · reading hold begins
-     3300   Reading hold ends (1.2s) · premium exit sequence begins
-     3500   Step 2: Constellation fades
-     3700   Step 3: Core dims further
-     4100   Step 5: Preloader layer dissolves (opacity → 0 over 1.6s)
-     5900   Step 6: Preloader removed from DOM
-   ============================================================= */
-(function () {
-  'use strict';
-
-  /* ── DOM refs ── */
-  var preloader    = document.getElementById('preloader');
-  var canvas       = document.getElementById('pl-canvas');
-  var ctx          = canvas.getContext('2d');
-  var vigCanvas    = document.getElementById('pl-vignette-warp');
-  var vigCtx       = vigCanvas ? vigCanvas.getContext('2d') : null;
-  var coreEl       = document.getElementById('pl-core');
-  var flashEl      = document.getElementById('pl-flash');
-  var pulseEls     = document.querySelectorAll('.pl-pulse');
-  var plName       = document.getElementById('pl-name');
-  var plHeadline   = document.getElementById('pl-headline');
-
-  /* ── POSITION MIRROR: read real hero element positions, apply to preloader ──
-     This guarantees pixel-perfect alignment when the preloader fades out.
-     We read the hero DOM directly and set matching `top` values on the mirror.
-  */
-  (function alignMirrorToHero() {
-    var heroName     = document.querySelector('.hero-name');
-    var heroHeadline = document.querySelector('.hero-headline');
-
-    if (!heroName || !heroHeadline) return;
-
-    /* getBoundingClientRect gives viewport-relative positions, which is
-       exactly what we need since the preloader is fixed/inset:0 */
-    var nameRect     = heroName.getBoundingClientRect();
-    var headlineRect = heroHeadline.getBoundingClientRect();
-
-    /* Set top of each mirror element to match the real element's top edge */
-    plName.style.top     = nameRect.top     + 'px';
-    plHeadline.style.top = headlineRect.top + 'px';
-  })();
-
-  /* ── colour palette ── */
-  var GOLD_BRIGHT = 'rgba(251,191,36,';
-  var GOLD_MID    = 'rgba(245,158,11,';
-  var INDIGO      = 'rgba(99,102,241,';
-  var VIOLET      = 'rgba(139,92,246,';
-  var BLUE        = 'rgba(96,165,250,';
-  var WHITE       = 'rgba(240,239,248,';
-
-  /* ── state ── */
-  var W, H, CX, CY;
-  var nodes        = [];
-  var connections  = [];
-  var rafId        = null;
-  var phase        = 0;      // 0=init, 1=nodes, 2=connect, 3=dissolve, 4=exit-dissolve
-  var nodesReady   = false;
-  var connectStart = 0;
-  var dissolveStart= 0;
-  var dissolveAlpha= 1;
-  var exitDissolveStart = 0;   // for step-2 canvas fade during exit
-  var exitDissolving    = false;
-
-  /* ── vignette warp state ── */
-  var vigPhase      = 0;   // 0=off, 1=building, 2=holding, 3=relaxing
-  var vigBuildStart = 0;
-  var vigWarpTime   = 0;   // running clock for spatial motion
-  var vigRafId      = null;
-
-  /* ── resize ── */
-  function resize() {
-    W  = canvas.width  = window.innerWidth;
-    H  = canvas.height = window.innerHeight;
-    CX = W / 2;
-    CY = H / 2;
-    if (vigCanvas) {
-      vigCanvas.width  = window.innerWidth;
-      vigCanvas.height = window.innerHeight;
-      /* size and position to match preloader */
-      vigCanvas.style.position = 'absolute';
-      vigCanvas.style.inset = '0';
-      vigCanvas.style.width  = '100%';
-      vigCanvas.style.height = '100%';
-    }
-  }
-  resize();
-  window.addEventListener('resize', function () { resize(); }, { passive: true });
-
-  /* ── node generation ──
-     We seed nodes across the full viewport using a mixture of:
-       1. A geometric core cluster near centre (precision layer)
-       2. Mid-ring nodes forming constellation shapes
-       3. Edge / deep-space nodes (farther, dimmer, smaller)
-     This produces the "observed from space" depth illusion.
-  */
-  function generateNodes() {
-    nodes = [];
-
-    /* --- CORE CLUSTER: tight geometric polygon near centre --- */
-    var coreAngles = [0, 60, 120, 180, 240, 300];
-    var coreR = Math.min(W, H) * 0.09;
-    coreAngles.forEach(function (deg) {
-      var rad = deg * Math.PI / 180;
-      nodes.push({
-        x:      CX + Math.cos(rad) * coreR,
-        y:      CY + Math.sin(rad) * coreR,
-        r:      2.2,
-        bright: 1.0,
-        layer:  0,
-        alpha:  0,
-        targetAlpha: 1.0,
-        twinkleOffset: Math.random() * Math.PI * 2,
-        type:   'core'
-      });
-    });
-    /* inner hexagon vertex — smaller tight ring */
-    var innerAngles = [30, 90, 150, 210, 270, 330];
-    var innerR = coreR * 0.48;
-    innerAngles.forEach(function (deg) {
-      var rad = deg * Math.PI / 180;
-      nodes.push({
-        x:      CX + Math.cos(rad) * innerR,
-        y:      CY + Math.sin(rad) * innerR,
-        r:      1.6,
-        bright: 0.85,
-        layer:  0,
-        alpha:  0,
-        targetAlpha: 0.85,
-        twinkleOffset: Math.random() * Math.PI * 2,
-        type:   'inner'
-      });
-    });
-
-    /* --- MID RING: constellation shapes, intelligently placed --- */
-    var midR1 = Math.min(W, H) * 0.22;
-    var midR2 = Math.min(W, H) * 0.33;
-    var midSeeds = [
-      { r: midR1, deg: 30  }, { r: midR1 * 1.1, deg: 55  }, { r: midR1 * 0.9, deg: 10  },
-      { r: midR1, deg: 210 }, { r: midR1 * 1.1, deg: 235 }, { r: midR1 * 0.85, deg: 190 },
-      { r: midR2, deg: 130 }, { r: midR2 * 1.1, deg: 155 }, { r: midR2 * 0.9, deg: 115 }, { r: midR2 * 1.05, deg: 140 },
-      { r: midR2, deg: 310 }, { r: midR2 * 0.95, deg: 335 }, { r: midR2 * 1.08, deg: 290 },
-      { r: midR1 * 1.4, deg: 90  },
-      { r: midR1 * 1.4, deg: 270 },
-      { r: midR2 * 1.2, deg: 0   },
-      { r: midR2 * 1.1, deg: 180 }
-    ];
-    midSeeds.forEach(function (seed) {
-      var jitter = midR1 * 0.06;
-      var rad = seed.deg * Math.PI / 180;
-      var bright = 0.55 + Math.random() * 0.4;
-      nodes.push({
-        x:      CX + Math.cos(rad) * seed.r + (Math.random() - 0.5) * jitter,
-        y:      CY + Math.sin(rad) * seed.r + (Math.random() - 0.5) * jitter,
-        r:      1.1 + Math.random() * 0.9,
-        bright: bright,
-        layer:  1,
-        alpha:  0,
-        targetAlpha: bright,
-        twinkleOffset: Math.random() * Math.PI * 2,
-        type:   'mid'
-      });
-    });
-
-    /* --- DEEP SPACE: scattered dim stars across full viewport --- */
-    var edgeCount = Math.max(18, Math.floor((W * H) / 22000));
-    for (var i = 0; i < edgeCount; i++) {
-      var x, y, distSq;
-      var minClearSq = Math.pow(Math.min(W, H) * 0.08, 2);
-      do {
-        x = Math.random() * W;
-        y = Math.random() * H;
-        distSq = Math.pow(x - CX, 2) + Math.pow(y - CY, 2);
-      } while (distSq < minClearSq);
-
-      var bright2 = 0.12 + Math.random() * 0.35;
-      nodes.push({
-        x:      x,
-        y:      y,
-        r:      0.5 + Math.random() * 0.8,
-        bright: bright2,
-        layer:  2,
-        alpha:  0,
-        targetAlpha: bright2,
-        twinkleOffset: Math.random() * Math.PI * 2,
-        type:   'deep'
-      });
-    }
-  }
-
-  /* ── connection graph ── */
-  function generateConnections() {
-    connections = [];
-    var maxDeg = { 0: 5, 1: 3, 2: 1 };
-    var thresholds = { 0: Math.min(W, H) * 0.16, 1: Math.min(W, H) * 0.18, 2: Math.min(W, H) * 0.10 };
-    var degrees = nodes.map(function () { return 0; });
-
-    for (var i = 0; i < nodes.length; i++) {
-      for (var j = i + 1; j < nodes.length; j++) {
-        var a = nodes[i], b = nodes[j];
-        if (Math.abs(a.layer - b.layer) > 1) continue;
-        var maxLayer = Math.max(a.layer, b.layer);
-        var thresh = thresholds[maxLayer];
-        var dist = Math.hypot(b.x - a.x, b.y - a.y);
-        if (dist > thresh) continue;
-        if (degrees[i] >= maxDeg[a.layer]) continue;
-        if (degrees[j] >= maxDeg[b.layer]) continue;
-        if (Math.random() > (1 - dist / thresh) * 0.9) continue;
-        var opacity = (1 - dist / thresh) * 0.45 * Math.min(a.bright, b.bright);
-        connections.push({
-          a:     i,
-          b:     j,
-          alpha: 0,
-          targetAlpha: opacity,
-          drawn: 0,
-          len:   dist
-        });
-        degrees[i]++;
-        degrees[j]++;
-      }
-    }
-  }
-
-  /* ── draw frame ── */
-  var tweenStart = 0;
-
-  function draw(ts) {
-    ctx.clearRect(0, 0, W, H);
-
-    /* PHASE 1 (0–800ms): nodes scatter in */
-    if (phase >= 1) {
-      var nodeProgress = Math.min(1, (ts - tweenStart) / 800);
-      nodes.forEach(function (node, i) {
-        var delay = (i / nodes.length) * 0.6;
-        var p = Math.max(0, Math.min(1, (nodeProgress - delay) / 0.4));
-        p = 1 - Math.pow(1 - p, 3);
-
-        /* During exit-dissolve (phase 4), fade nodes out gracefully */
-        var exitFade = 1;
-        if (exitDissolving) {
-          var eEl = Math.max(0, ts - exitDissolveStart);
-          exitFade = Math.max(0, 1 - eEl / 600);
-        }
-
-        node.alpha = node.targetAlpha * p * exitFade;
-
-        var twinkle = 0.85 + 0.15 * Math.sin(ts * 0.001 * 1.5 + node.twinkleOffset);
-        var a = node.alpha * twinkle;
-        if (a < 0.005) return;
-
-        if (node.type === 'core') {
-          ctx.fillStyle = 'rgba(255,245,215,' + a + ')';
-        } else if (node.type === 'inner') {
-          ctx.fillStyle = 'rgba(251,191,36,' + (a * 0.7) + ')';
-        } else if (node.type === 'mid') {
-          if (i % 3 === 0) ctx.fillStyle = 'rgba(165,180,252,' + a + ')';
-          else if (i % 3 === 1) ctx.fillStyle = 'rgba(196,181,253,' + a + ')';
-          else ctx.fillStyle = 'rgba(224,231,255,' + a + ')';
-        } else {
-          ctx.fillStyle = 'rgba(203,213,225,' + (a * 0.7) + ')';
-        }
-
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
-        ctx.fill();
-
-        if (node.bright > 0.7 && node.alpha > 0.3) {
-          ctx.save();
-          var grd = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.r * 4);
-          if (node.type === 'core') {
-            grd.addColorStop(0, 'rgba(251,191,36,' + (a * 0.4) + ')');
-          } else {
-            grd.addColorStop(0, 'rgba(139,92,246,' + (a * 0.25) + ')');
-          }
-          grd.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = grd;
-          ctx.beginPath();
-          ctx.arc(node.x, node.y, node.r * 4, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
-        }
-      });
-    }
-
-    /* PHASE 2 (connections): animate dash-draw */
-    if (phase >= 2) {
-      var connElapsed = ts - connectStart;
-
-      /* During exit-dissolve, fade connections */
-      var connExitFade = 1;
-      if (exitDissolving) {
-        var ceEl = Math.max(0, ts - exitDissolveStart);
-        connExitFade = Math.max(0, 1 - ceEl / 500);
-      }
-
-      connections.forEach(function (conn, i) {
-        var delay = (i / connections.length) * 700;
-        var p = Math.max(0, Math.min(1, (connElapsed - delay) / 350));
-        p = 1 - Math.pow(1 - p, 2);
-        conn.drawn  = p;
-        conn.alpha  = conn.targetAlpha * p * connExitFade;
-
-        if (conn.alpha < 0.005 || conn.drawn < 0.01) return;
-
-        var a = nodes[conn.a], b = nodes[conn.b];
-        var ex = a.x + (b.x - a.x) * conn.drawn;
-        var ey = a.y + (b.y - a.y) * conn.drawn;
-
-        ctx.save();
-        ctx.strokeStyle = 'rgba(139,92,246,' + conn.alpha + ')';
-        ctx.lineWidth   = 0.65;
-        ctx.setLineDash([3, 5]);
-        ctx.lineDashOffset = -ts * 0.008;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(ex, ey);
-        ctx.stroke();
-        ctx.restore();
-      });
-    }
-
-    /* PHASE 3 (dissolve): fade network canvas */
-    if (phase >= 3 && !exitDissolving) {
-      var dElapsed = ts - dissolveStart;
-      dissolveAlpha = Math.max(0, 1 - dElapsed / 500);
-      ctx.globalAlpha = dissolveAlpha;
-    }
-
-    if (dissolveAlpha > 0 || exitDissolving) {
-      rafId = requestAnimationFrame(draw);
-    } else if (!exitDissolving) {
-      ctx.clearRect(0, 0, W, H);
-    }
-  }
-
-  /* ── VIGNETTE WARP RENDERER ──
-     Draws an extremely subtle gravitational-lens distortion in the outer
-     edge zones only. Centre remains perfectly clear and readable.
-     Uses layered elliptical gradients with a time-varying offset to
-     create the sense of slow spatial movement — like light bending
-     around a massive object.
-  */
-  function drawVignette(ts) {
-    if (!vigCtx) return;
-    vigCtx.clearRect(0, 0, W, H);
-
-    var intensity = 0;
-    var elapsed = ts - vigBuildStart;
-
-    if (vigPhase === 1) {
-      /* build up over 600ms */
-      intensity = Math.min(1, elapsed / 600);
-      intensity = 1 - Math.pow(1 - intensity, 2); /* ease-out */
-    } else if (vigPhase === 2) {
-      /* hold at full intensity */
-      intensity = 1;
-    } else if (vigPhase === 3) {
-      /* relax: intensity fades in the CSS (opacity), warp still draws */
-      intensity = 1;
-    }
-
-    if (intensity < 0.005) {
-      vigRafId = requestAnimationFrame(drawVignette);
-      return;
-    }
-
-    vigWarpTime = ts * 0.0004; /* very slow drift */
-
-    /* ── Primary dark vignette ── */
-    var vgBase = vigCtx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.32,
-                                              W / 2, H / 2, Math.max(W, H) * 0.88);
-    vgBase.addColorStop(0, 'rgba(0,0,0,0)');
-    vgBase.addColorStop(0.65, 'rgba(0,0,0,0)');
-    vgBase.addColorStop(1,    'rgba(0,0,0,' + (0.22 * intensity) + ')');
-    vigCtx.fillStyle = vgBase;
-    vigCtx.fillRect(0, 0, W, H);
-
-    /* ── Subtle warp shimmer at four edge zones ──
-       Each zone pulses with a slow phase-offset sine, creating the
-       impression of spatial curvature without any harsh motion.
-    */
-    var zones = [
-      /* [cx_frac, cy_frac, rx_frac, ry_frac, phase_offset] */
-      [0,    0,    0.5, 0.4, 0],
-      [1,    0,    0.5, 0.4, Math.PI * 0.5],
-      [0,    1,    0.5, 0.4, Math.PI],
-      [1,    1,    0.5, 0.4, Math.PI * 1.5],
-      [0.5,  0,    0.6, 0.3, Math.PI * 0.25],
-      [0.5,  1,    0.6, 0.3, Math.PI * 0.75]
-    ];
-
-    zones.forEach(function (z) {
-      var cx = z[0] * W;
-      var cy = z[1] * H;
-      var rx = z[2] * W;
-      var ry = z[3] * H;
-      var ph = z[4];
-
-      /* oscillating inner radius — creates the "breathing" warp */
-      var breathe = Math.sin(vigWarpTime * 1.8 + ph) * 0.04;
-      var innerFrac = 0.55 + breathe;
-
-      /* very subtle colour fringe — barely perceptible indigo at edges */
-      var fringeAlpha = (0.035 + Math.sin(vigWarpTime * 1.1 + ph) * 0.012) * intensity;
-
-      var wg = vigCtx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry));
-      wg.addColorStop(0,          'rgba(0,0,0,0)');
-      wg.addColorStop(innerFrac,  'rgba(0,0,0,0)');
-      wg.addColorStop(0.82,       'rgba(8,8,20,' + (fringeAlpha * 0.6) + ')');
-      wg.addColorStop(1,          'rgba(12,8,28,' + fringeAlpha + ')');
-
-      vigCtx.save();
-      vigCtx.scale(1, ry / rx);
-      vigCtx.fillStyle = wg;
-      vigCtx.beginPath();
-      vigCtx.arc(cx, cy * (rx / ry), rx, 0, Math.PI * 2);
-      vigCtx.fill();
-      vigCtx.restore();
-    });
-
-    vigRafId = requestAnimationFrame(drawVignette);
-  }
-
-  /* ── ANIMATION SEQUENCE ── */
-
-  /* T=0: start RAF */
-  tweenStart = performance.now();
-  rafId = requestAnimationFrame(draw);
-
-  /* T=300ms: core appears */
-  setTimeout(function () {
-    coreEl.classList.add('alive');
-  }, 300);
-
-  /* T=600ms: scatter nodes */
-  setTimeout(function () {
-    generateNodes();
-    tweenStart = performance.now();
-    phase = 1;
-  }, 600);
-
-  /* T=1000ms: draw connections */
-  setTimeout(function () {
-    generateConnections();
-    connectStart = performance.now();
-    phase = 2;
-  }, 1000);
-
-  /* T=1600ms: name shadow-form emerges */
-  setTimeout(function () {
-    plName.classList.add('emerge');
-    plHeadline.classList.add('emerge');
-  }, 1600);
-
-  /* T=1900ms: core expands + flash */
-  setTimeout(function () {
-    coreEl.classList.add('expanding');
-    flashEl.classList.add('on');
-  }, 1900);
-
-  /* T=2100ms: flash off · network dissolves · text materialises · focus-dim begins */
-  setTimeout(function () {
-    flashEl.classList.remove('on');
-    flashEl.classList.add('off');
-    dissolveStart = performance.now();
-    phase = 3;
-
-    /* Text fully materialises */
-    plName.classList.add('materialize');
-    plHeadline.classList.add('materialize');
-
-    /* SINGLE PULSE — fired once, exactly as text becomes readable.
-       Three rings stagger by 100ms to read as one propagating wavefront,
-       not three separate events. Feels like signal transmission / system
-       initialisation rather than repeated shockwaves. */
-    firePulse(0, 0);
-    firePulse(1, 100);
-    firePulse(2, 200);
-
-    /* Focus mode: reduce core visual dominance so text reads first */
-    setTimeout(function () {
-      coreEl.classList.add('focus-dim');
-    }, 400);
-  }, 2100);
-
-  /* T=2300ms: CHANGE 4 — vignette warp activates during reading hold */
-  setTimeout(function () {
-    vigBuildStart = performance.now();
-    vigPhase = 1;
-    vigRafId = requestAnimationFrame(drawVignette);
-    if (vigCanvas) {
-      vigCanvas.style.opacity = '1';
-    }
-  }, 2300);
-
-  /* T=2700ms: vignette warp reaches hold phase */
-  setTimeout(function () {
-    vigPhase = 2;
-  }, 2700);
-
-  /* T=3300ms: CHANGE 2 — end of 1.2s reading hold · begin CHANGE 5 premium exit sequence */
-
-  /* Step 1 (T=3300ms): vignette warp gently relaxes */
-  setTimeout(function () {
-    vigPhase = 3;
-    if (vigCanvas) {
-      vigCanvas.style.transition = 'opacity 1.4s cubic-bezier(0.4,0,0.2,1)';
-      vigCanvas.style.opacity = '0';
-    }
-  }, 3300);
-
-  /* Step 2 (T=3500ms): constellation fades — begin exit canvas dissolve */
-  setTimeout(function () {
-    exitDissolveStart = performance.now();
-    exitDissolving = true;
-    phase = 4;
-    /* Reset globalAlpha in case phase 3 had it */
-    dissolveAlpha = 1;
-  }, 3500);
-
-  /* Step 3 (T=3700ms): gold core dims further */
-  setTimeout(function () {
-    /* Add an additional softer transition on top of focus-dim */
-    coreEl.style.transition = 'opacity 1.2s ease, box-shadow 1.2s ease, transform 0.6s cubic-bezier(0.4,0,0.2,1)';
-    coreEl.style.opacity = '0.25';
-  }, 3700);
-
-  /* Step 4 (T=3900ms): text stays visible longest — hero section starts becoming visible */
-  /* (text is on top in z-index; the preloader opacity fade handles the reveal) */
-
-  /* Step 5 (T=4100ms): preloader layer begins dissolving (transition is 1.6s per CSS) */
-  setTimeout(function () {
-    preloader.classList.add('pl-exit');
-    document.body.classList.remove('preloading');
-  }, 4100);
-
-  /* Step 6 (T=5900ms): remove preloader from DOM (after 1.6s fade + buffer) */
-  setTimeout(function () {
-    if (preloader && preloader.parentNode) {
-      preloader.parentNode.removeChild(preloader);
-    }
-    if (rafId) cancelAnimationFrame(rafId);
-    if (vigRafId) cancelAnimationFrame(vigRafId);
-  }, 5900);
-
-  /* ── helper: fire a pulse ring ── */
-  function firePulse(index, extraDelay) {
-    var el = pulseEls[index];
-    if (!el) return;
-    setTimeout(function () {
-      el.classList.remove('fire');
-      void el.offsetWidth;
-      el.classList.add('fire');
-    }, extraDelay || 0);
-  }
-
-})();
-</script>
 
 <script>
 (function() {
@@ -2313,5 +1952,743 @@
   }
 })();
 </script>
+
+<style id="rebirth-vision">
+:root{--bg-primary:#070910;--bg-secondary:#0b1020;--bg-card:rgba(15,22,39,.72);--text-primary:#eef3ff;--text-secondary:#a4b2c9;--accent-indigo:#5b8cff;--accent-violet:#9b7bff;--border:rgba(160,184,255,.13);--glow:rgba(83,131,255,.18)}
+body{background:radial-gradient(ellipse at 75% 8%,rgba(54,91,171,.15),transparent 34%),radial-gradient(ellipse at 12% 42%,rgba(113,72,190,.10),transparent 35%),#070910}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.16;background-image:linear-gradient(rgba(133,163,220,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(133,163,220,.06) 1px,transparent 1px);background-size:72px 72px;mask-image:linear-gradient(to bottom,black,transparent 80%)}
+#ambient-particles{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:.62}
+.container{max-width:1200px}
+nav{padding:20px 0}
+.nav-logo{font-size:17px;letter-spacing:-.06em}.nav-logo span{color:#91aaff}
+.nav-cta,.btn-primary{background:linear-gradient(120deg,#477cff,#9a71ff);box-shadow:0 8px 34px rgba(85,119,255,.25);border:1px solid rgba(255,255,255,.16)}
+.btn-primary,.btn-secondary,.nav-cta{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.btn-secondary{border:1px solid rgba(180,198,255,.22);background:rgba(255,255,255,.035);backdrop-filter:blur(14px)}
+#hero{min-height:100svh;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr);align-items:center;text-align:left;gap:clamp(20px,3.5vw,54px);padding:104px max(24px,calc((100vw - 1200px)/2)) 62px}
+.hero-bg-glow{left:28%;top:-30%;width:800px;height:700px;background:radial-gradient(ellipse,rgba(66,113,255,.18),rgba(130,87,255,.07) 42%,transparent 70%)}
+.hero-content{max-width:720px}.hero-badge{border-color:rgba(126,164,255,.28);color:#a8c1ff;background:rgba(85,130,255,.08);margin-bottom:28px}
+.hero-name{font-family:var(--font-body);font-size:clamp(54px,7.4vw,92px);font-weight:700;letter-spacing:-.075em;line-height:.98;margin-bottom:24px}
+.hero-headline{font-size:clamp(22px,3vw,37px);font-weight:550;line-height:1.24;letter-spacing:-.045em;margin:0 0 24px;color:#d9e3f6;max-width:700px}
+.hero-subheadline{justify-content:flex-start;margin-bottom:36px;gap:12px}
+.hero-role-tag{font-size:11px;color:#a8b8d2;letter-spacing:.11em}
+.hero-ctas{justify-content:flex-start}
+.hero-visual{position:relative;min-height:390px;display:grid;place-items:center;isolation:isolate;perspective:900px}
+.visual-globe{width:min(62vw,340px);aspect-ratio:1;border-radius:50%;position:relative;display:grid;place-items:center;background:radial-gradient(circle at 35% 28%,rgba(107,153,255,.28),rgba(33,55,103,.18) 42%,rgba(10,16,32,.05) 70%);border:1px solid rgba(148,180,255,.3);box-shadow:inset 0 0 60px rgba(100,145,255,.12),0 0 100px rgba(69,110,255,.14),0 30px 90px rgba(0,0,0,.25);transform:rotateX(12deg) rotateY(-13deg);animation:globeFloat 8s ease-in-out infinite}
+.visual-globe:before,.visual-globe:after{content:"";position:absolute;inset:10%;border:1px solid rgba(139,173,255,.22);border-radius:50%;transform:rotate(58deg) scaleX(.48)}
+.visual-globe:after{transform:rotate(-58deg) scaleX(.48)}
+.globe-grid{position:absolute;inset:0;border-radius:50%;background:repeating-linear-gradient(0deg,transparent 0 29px,rgba(135,168,255,.11) 30px 31px),repeating-linear-gradient(90deg,transparent 0 29px,rgba(135,168,255,.08) 30px 31px);mask-image:radial-gradient(circle,black 20%,transparent 72%)}
+.globe-core{font-size:42px;font-weight:700;letter-spacing:-.09em;color:#dce8ff;text-shadow:0 0 30px #82aaff}
+.visual-orbit{position:absolute;border:1px solid rgba(129,163,255,.22);border-radius:50%;width:90%;height:52%;transform:rotate(-28deg);animation:orbitSpin 22s linear infinite}
+.orbit-two{width:106%;height:68%;transform:rotate(52deg);animation-duration:30s;border-color:rgba(169,127,255,.19)}
+.network-lines{position:absolute;width:100%;height:100%;inset:0;z-index:-1;overflow:visible}
+.network-lines path{fill:none;stroke:rgba(122,157,255,.28);stroke-width:1;stroke-dasharray:5 9;animation:dash 24s linear infinite}
+.tech-node{position:absolute;z-index:3;padding:10px 13px;border:1px solid rgba(153,180,255,.22);border-radius:12px;background:rgba(12,20,38,.78);backdrop-filter:blur(16px);font-size:9px;font-weight:650;letter-spacing:.14em;color:#bdcfff;box-shadow:0 12px 35px rgba(0,0,0,.22);animation:nodeFloat 5s ease-in-out infinite}
+.tech-node i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#7da6ff;box-shadow:0 0 12px #7da6ff;margin-right:7px}
+.node-health{top:15%;left:2%}.node-data{top:25%;right:-2%;animation-delay:-1.5s}.node-ai{bottom:19%;left:3%;animation-delay:-2.3s}.node-cloud{bottom:12%;right:4%;animation-delay:-.8s}
+@keyframes globeFloat{50%{transform:translateY(-12px) rotateX(16deg) rotateY(-8deg)}}@keyframes orbitSpin{to{transform:rotate(332deg)}}@keyframes nodeFloat{50%{translate:0 -9px}}@keyframes dash{to{stroke-dashoffset:-240}}
+.hero-scroll{left:50%;bottom:20px;transform:translateX(-50%);color:#72809b}
+section{z-index:2;padding-top:110px;padding-bottom:110px}
+section:not(#hero){scroll-margin-top:80px}
+.section-title,.section-heading h2{letter-spacing:-.055em}
+.section-subtitle,.section-description{max-width:660px;color:#94a4bf}
+.experience-card,.about-card,.skill-category,.project-card,.leadership-card,.achievement-card,.education-card,.contact-card,.certification-card{background:linear-gradient(145deg,rgba(20,29,49,.82),rgba(10,15,28,.72));border:1px solid rgba(151,179,245,.14);box-shadow:0 18px 60px rgba(0,0,0,.18);backdrop-filter:blur(18px);border-radius:20px;transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .3s,box-shadow .3s}
+.experience-card:hover,.about-card:hover,.skill-category:hover,.project-card:hover,.leadership-card:hover,.achievement-card:hover,.education-card:hover,.contact-card:hover,.certification-card:hover{border-color:rgba(132,166,255,.38);box-shadow:0 26px 70px rgba(25,54,116,.18);transform:translateY(-5px)}
+.journey-wrap{margin-top:76px;padding:36px clamp(20px,4vw,48px);border:1px solid rgba(143,174,255,.14);border-radius:24px;background:linear-gradient(140deg,rgba(15,24,44,.72),rgba(9,14,27,.55));overflow:hidden}
+.eyebrow{font-size:10px;letter-spacing:.2em;color:#8faeff;font-weight:700}.journey-heading h3{font-size:clamp(27px,4vw,42px);letter-spacing:-.06em;margin:8px 0 34px}
+.journey-track{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:30px 24px}
+.journey-track:before{content:"";position:absolute;left:0;right:0;top:10px;height:1px;background:rgba(129,159,224,.2)}
+.journey-progress{position:absolute;left:0;top:10px;height:1px;width:0;background:linear-gradient(90deg,#6295ff,#a78bfa);box-shadow:0 0 12px #759cff}
+.journey-item{position:relative;padding-top:34px;opacity:0;transform:translateY(18px);transition:opacity .65s cubic-bezier(.65,0,.35,1),transform .65s cubic-bezier(.65,0,.35,1)}
+.journey-item:before{content:"";position:absolute;top:4px;left:0;width:12px;height:12px;border-radius:50%;background:#8baeff;border:3px solid #111b31;box-shadow:0 0 0 1px rgba(139,174,255,.5),0 0 18px rgba(111,153,255,.45);transform:scale(0);transition:transform .3s cubic-bezier(.65,0,.35,1),box-shadow .3s}
+.journey-item > div,.journey-year{opacity:0;transform:translateX(-12px);transition:opacity .45s cubic-bezier(.65,0,.35,1),transform .45s cubic-bezier(.65,0,.35,1)}
+.journey-item--in{opacity:1;transform:translateY(0)}
+.journey-item--in:before{transform:scale(1);box-shadow:0 0 0 1px rgba(139,174,255,.5),0 0 22px rgba(111,153,255,.7)}
+.journey-item--in > div,.journey-item--in .journey-year{opacity:1;transform:translateX(0)}
+.journey-progress{transform-origin:left center;transition:width 1.5s cubic-bezier(.2,.8,.2,1)}
+.journey-track--in .journey-progress{width:100%}
+.journey-year{font-size:11px;color:#91adf5;letter-spacing:.12em;font-weight:700}.journey-item h4{font-size:15px;margin:8px 0 6px}.journey-item p{font-size:12px;line-height:1.65;color:#91a0b9;max-width:290px}.journey-next:before{background:#a58aff}
+.skill-tag,.skill-chip,.tech-tag{border:1px solid rgba(143,171,237,.18)!important;background:rgba(110,143,220,.07)!important;color:#c2d1ed!important;transition:transform .2s,border-color .2s,background .2s}
+.skill-tag:hover,.skill-chip:hover,.tech-tag:hover{transform:translateY(-3px);border-color:rgba(132,167,255,.55)!important;background:rgba(99,139,232,.15)!important}
+.project-card{overflow:hidden}.project-card img{border-radius:14px}
+.certification-card{background:linear-gradient(120deg,rgba(25,35,58,.8),rgba(12,18,32,.7))}
+.contact-section,.contact-terminal{background:linear-gradient(145deg,rgba(14,22,40,.9),rgba(8,13,25,.92));border:1px solid rgba(140,171,245,.18);border-radius:22px}
+a:focus-visible,button:focus-visible{outline:2px solid #9ab8ff;outline-offset:4px}
+.reveal{transition:opacity .65s ease,transform .65s cubic-bezier(.2,.8,.2,1)}
+@media(max-width:900px){#hero{grid-template-columns:1fr;text-align:center;padding-top:104px;padding-bottom:62px;gap:8px}.hero-content{margin:auto}.hero-headline{margin-left:auto;margin-right:auto}.hero-subheadline,.hero-ctas{justify-content:center}.hero-visual{min-height:330px;max-width:620px;width:100%;margin:auto}.visual-globe{width:280px}.tech-node{font-size:8px}.journey-track{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){#hero{padding:100px 22px 58px}.hero-name{font-size:clamp(48px,14vw,70px)}.hero-visual{min-height:280px}.visual-globe{width:220px}.tech-node{padding:8px 9px;font-size:7px}.node-data{right:0}.node-health{left:0}.journey-wrap{padding:26px 20px}.journey-track{grid-template-columns:1fr;gap:20px}.journey-track:before{left:5px;right:auto;top:0;bottom:0;width:1px;height:auto}.journey-progress{left:5px;top:0;width:1px;height:0;transform-origin:top center;transition:height 1.5s cubic-bezier(.2,.8,.2,1)}.journey-track--in .journey-progress{width:1px;height:100%}.journey-item{padding:0 0 0 28px}.journey-item > div,.journey-year{transform:translateX(-12px)}.journey-item--in > div,.journey-item--in .journey-year{transform:translateX(0)}.journey-item:before{top:3px;left:0}.journey-item p{max-width:none}section{padding-top:78px;padding-bottom:78px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}#ambient-particles{display:none}}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js" defer></script>
+<script>
+(function(){
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const canvas=document.getElementById('ambient-particles');
+ if(canvas&&!reduced){
+  const ctx=canvas.getContext('2d');let w,h,dpr,pts=[],raf;
+  function resize(){dpr=Math.min(devicePixelRatio||1,2);w=innerWidth;h=innerHeight;canvas.width=w*dpr;canvas.height=h*dpr;canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);pts=Array.from({length:Math.min(70,Math.floor(w/18))},()=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22,r:Math.random()*1.5+.4}));}
+  function draw(){ctx.clearRect(0,0,w,h);for(let i=0;i<pts.length;i++){let p=pts[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(151,183,255,.52)';ctx.fill();for(let j=i+1;j<pts.length;j++){let q=pts[j],dx=p.x-q.x,dy=p.y-q.y,dist=Math.hypot(dx,dy);if(dist<115){ctx.strokeStyle='rgba(111,151,242,'+(1-dist/115)*.12+')';ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.stroke();}}}raf=requestAnimationFrame(draw);}
+  resize();draw();addEventListener('resize',resize,{passive:true});document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelAnimationFrame(raf);else draw();});
+ }
+ // Magnetic interaction, deliberately restrained.
+ if(matchMedia('(hover:hover) and (pointer:fine)').matches&&!reduced){
+  document.querySelectorAll('.btn-primary,.btn-secondary,.nav-cta').forEach(el=>{
+   el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;el.style.transform=`translate(${x*.10}px,${y*.14}px)`;});
+   el.addEventListener('mouseleave',()=>el.style.transform='');
+  });
+  const visual=document.querySelector('.hero-visual');
+  if(visual)visual.addEventListener('mousemove',e=>{const r=visual.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;visual.style.transform=`perspective(900px) rotateY(${x*4}deg) rotateX(${-y*4}deg)`;});
+  if(visual)visual.addEventListener('mouseleave',()=>visual.style.transform='');
+ }
+ const track=document.querySelector('.journey-track');
+ if(track){
+  const timelineItems=track.querySelectorAll('.journey-item');
+  const timelineObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{
+   entry.target.classList.toggle('journey-item--in',entry.isIntersecting);
+  }),{root:null,rootMargin:'0px 0px -6% 0px',threshold:.12});
+  timelineItems.forEach(item=>timelineObserver.observe(item));
+  const trackObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{
+   track.classList.toggle('journey-track--in',entry.isIntersecting);
+  }),{root:null,rootMargin:'0px',threshold:.18});
+  trackObserver.observe(track);
+ }
+ // Anime.js enhancement, with CSS reveal fallback if CDN is unavailable.
+ function animate(){
+  if(!window.anime)return;
+  const hero=document.querySelectorAll('.hero-badge,.hero-name,.hero-headline,.hero-subheadline,.hero-ctas');
+  anime({targets:hero,translateY:[28,0],opacity:[0,1],delay:anime.stagger(110),duration:900,easing:'easeOutExpo'});
+  document.querySelectorAll('.project-card,.achievement-card,.certification-card').forEach((el,i)=>{
+   const obs=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){anime({targets:el,translateY:[24,0],opacity:[0,1],duration:750,delay:i%4*65,easing:'easeOutCubic'});obs.disconnect();}}),{threshold:.12});obs.observe(el);
+  });
+  document.querySelectorAll('.hero-name').forEach(el=>{el.setAttribute('aria-label',el.textContent.trim());});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(animate,80));else setTimeout(animate,80);
+})();
+</script>
+
+<style id="rebirth-chromatic-wave">
+  /* Hero-only spectral sine ribbon. All existing hero content stays above it. */
+  #hero { isolation:isolate; }
+  #hero-chromatic-wave {
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+    z-index:1;
+    pointer-events:none;
+    opacity:.86;
+    mix-blend-mode:screen;
+  }
+  #hero .hero-bg-glow { z-index:0; }
+  #hero .hero-content,
+  #hero .hero-visual,
+  #hero .hero-scroll { z-index:2; }
+  @media (max-width:700px) {
+    #hero-chromatic-wave { opacity:.68; }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    #hero-chromatic-wave { display:none; }
+  }
+</style>
+<script id="rebirth-chromatic-wave-renderer">
+(function () {
+  'use strict';
+  var canvas = document.getElementById('hero-chromatic-wave');
+  if (!canvas) return;
+
+  var reduceMotion = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) return;
+
+  var gl = canvas.getContext('webgl', {
+    alpha: true,
+    antialias: false,
+    depth: false,
+    stencil: false,
+    premultipliedAlpha: true,
+    powerPreference: 'low-power'
+  });
+  if (!gl) {
+    canvas.style.display = 'none';
+    return;
+  }
+
+  var vertexSource = [
+    'attribute vec2 a_position;',
+    'void main(){ gl_Position = vec4(a_position, 0.0, 1.0); }'
+  ].join('\n');
+
+  /*
+   * Chromatic Aberration WebGL Sine Wave reference:
+   * the original effect separates RGB samples by a radial distortion
+   * around a mathematical sine wave. This adaptation keeps that
+   * refractive RGB split, then disperses the wave through a spectral
+   * palette for a prismatic, time-and-light appearance.
+   */
+  var fragmentSource = [
+    'precision highp float;',
+    'uniform vec2 u_resolution;',
+    'uniform float u_time;',
+    'uniform float u_aspect;',
+    'float waveLine(float x, float t){',
+    '  /* One broad, flowing curve with only a gentle secondary swell. */',
+    '  return 0.115*sin(x*1.48-t*0.82)',
+    '       + 0.012*sin(x*2.35-t*0.52+0.65);',
+    '}',
+    'vec3 spectral(float h){',
+    '  vec3 phase = 6.28318*(h + vec3(0.00,0.33,0.67));',
+    '  return 0.52 + 0.48*cos(phase);',
+    '}',
+    'void main(){',
+    '  vec2 uv = gl_FragCoord.xy/u_resolution.xy;',
+    '  vec2 p = (gl_FragCoord.xy*2.0-u_resolution.xy)/min(u_resolution.x,u_resolution.y);',
+    '  float t = u_time;',
+    '  float radius = length(p);',
+    '  float dispersion = 0.018 + radius*0.012;',
+    '  float xR = p.x*(1.0+dispersion);',
+    '  float xG = p.x;',
+    '  float xB = p.x*(1.0-dispersion);',
+    '  float centreR = waveLine(xR,t);',
+    '  float centreG = waveLine(xG,t);',
+    '  float centreB = waveLine(xB,t);',
+    '  float dR = p.y-centreR;',
+    '  float dG = p.y-centreG;',
+    '  float dB = p.y-centreB;',
+    '  /* Broad luminous core: approximately 1 cm at common desktop sizes. */',
+    '  float coreR = exp(-abs(dR)*31.0);',
+    '  float coreG = exp(-abs(dG)*31.0);',
+    '  float coreB = exp(-abs(dB)*31.0);',
+    '  float glow = exp(-abs(p.y-waveLine(p.x,t))*9.0);',
+    '  float halo = exp(-abs(p.y-waveLine(p.x,t))*3.2);',
+    '  float hue = 0.54 + p.x*0.19 + t*0.018 + sin(p.x*2.0-t*0.2)*0.035;',
+    '  vec3 prism = spectral(hue);',
+    '  vec3 rgbSplit = vec3(coreR,coreG,coreB);',
+    '  vec3 colour = prism*(0.22 + glow*0.62);',
+    '  colour += vec3(0.22,0.58,1.0)*rgbSplit*0.72;',
+    '  colour += spectral(hue+0.075)*halo*0.22;',
+    '  colour += vec3(0.95,0.28,0.72)*coreR*0.16;',
+    '  float fadeX = smoothstep(0.02,0.32,uv.x)*(1.0-smoothstep(0.68,0.99,uv.x));',
+    '  float fadeY = 1.0-smoothstep(0.32,0.98,abs(p.y));',
+    '  float alpha = (glow*0.32 + halo*0.105 + max(max(coreR,coreG),coreB)*0.30)*fadeX*fadeY;',
+    '  alpha = clamp(alpha,0.0,0.58);',
+    '  colour *= alpha;',
+    '  gl_FragColor = vec4(colour,alpha);',
+    '}'
+  ].join('\n');
+
+  function compile(type, source) {
+    var shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      gl.deleteShader(shader);
+      return null;
+    }
+    return shader;
+  }
+
+  var vertexShader = compile(gl.VERTEX_SHADER, vertexSource);
+  var fragmentShader = compile(gl.FRAGMENT_SHADER, fragmentSource);
+  if (!vertexShader || !fragmentShader) {
+    canvas.style.display = 'none';
+    return;
+  }
+
+  var program = gl.createProgram();
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    canvas.style.display = 'none';
+    return;
+  }
+
+  gl.useProgram(program);
+  var buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    -1,-1, 1,-1, -1,1,
+    -1,1, 1,-1, 1,1
+  ]), gl.STATIC_DRAW);
+
+  var position = gl.getAttribLocation(program, 'a_position');
+  gl.enableVertexAttribArray(position);
+  gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+
+  var resolutionLocation = gl.getUniformLocation(program, 'u_resolution');
+  var timeLocation = gl.getUniformLocation(program, 'u_time');
+  var aspectLocation = gl.getUniformLocation(program, 'u_aspect');
+
+  gl.clearColor(0,0,0,0);
+  gl.disable(gl.DEPTH_TEST);
+  gl.disable(gl.BLEND);
+
+  var start = performance.now();
+  var raf = 0;
+  var isVisible = true;
+  var pixelRatio = 1;
+
+  function resize() {
+    var rect = canvas.getBoundingClientRect();
+    pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+    var width = Math.max(1, Math.round(rect.width*pixelRatio));
+    var height = Math.max(1, Math.round(rect.height*pixelRatio));
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+    }
+    gl.viewport(0,0,width,height);
+    gl.useProgram(program);
+    gl.uniform2f(resolutionLocation,width,height);
+    gl.uniform1f(aspectLocation,width/height);
+  }
+
+  function render(now) {
+    if (!isVisible || document.hidden) {
+      raf = requestAnimationFrame(render);
+      return;
+    }
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform1f(timeLocation,(now-start)*0.00052);
+    gl.drawArrays(gl.TRIANGLES,0,6);
+    raf = requestAnimationFrame(render);
+  }
+
+  var resizeObserver = null;
+  if ('ResizeObserver' in window) {
+    resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(canvas);
+  } else {
+    window.addEventListener('resize',resize,{passive:true});
+  }
+
+  document.addEventListener('visibilitychange',function(){
+    if (document.hidden) {
+      isVisible = false;
+      cancelAnimationFrame(raf);
+    } else {
+      isVisible = true;
+      resize();
+      raf = requestAnimationFrame(render);
+    }
+  });
+
+  resize();
+  raf = requestAnimationFrame(render);
+})();
+</script>
+
+
+<style id="rebirth-hero-hover-final-tuning">
+@media (max-width: 560px) {
+  #hero .hero-name { font-size: clamp(22px, 8.1vw, 44px); }
+}
+@media (max-width: 380px) {
+  #hero .hero-name { font-size: clamp(20px, 7.6vw, 30px); }
+}
+</style>
+
+
+
+<style id="rebirth-name-visibility-and-inverted-hover">
+/* Keep the complete name inside the left hero column at every viewport. */
+#hero .hero-name {
+  font-size: clamp(42px, 5.2vw, 78px);
+  letter-spacing: -.075em;
+  max-width: 100%;
+}
+@media (max-width: 900px) {
+  #hero .hero-name { font-size: clamp(38px, 7.2vw, 68px); }
+}
+@media (max-width: 560px) {
+  #hero .hero-name { font-size: clamp(23px, 7.4vw, 38px); }
+}
+@media (max-width: 360px) {
+  #hero .hero-name { font-size: 21px; }
+}
+
+/* Default state: clean name. The revealed greeting carries the RGB glitch. */
+#hero .hero-name-main {
+  color: var(--text-primary);
+  text-shadow: none;
+}
+#hero .hero-name-main::before,
+#hero .hero-name-main::after { display: none; }
+#hero .hero-name-greeting {
+  position: relative;
+  isolation: isolate;
+  color: #b9ccff;
+  text-shadow: 0 0 24px rgba(110,153,255,.32);
+}
+#hero .hero-name-greeting::before,
+#hero .hero-name-greeting::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+#hero .hero-name:hover .hero-name-greeting,
+#hero .hero-name:focus-visible .hero-name-greeting {
+  color: rgba(0,194,203,.2);
+  text-shadow: .05em 0 0 #ec2225, -.025em -.05em 0 #313f97,
+    .025em .05em 0 #50c878;
+}
+#hero .hero-name:hover .hero-name-greeting::before,
+#hero .hero-name:hover .hero-name-greeting::after,
+#hero .hero-name:focus-visible .hero-name-greeting::before,
+#hero .hero-name:focus-visible .hero-name-greeting::after { opacity: .8; }
+#hero .hero-name:hover .hero-name-greeting::before,
+#hero .hero-name:focus-visible .hero-name-greeting::before {
+  color: rgba(236,34,37,.2);
+  text-shadow: .05em 0 0 #ec2225, -.025em -.05em 0 #313f97,
+    .025em .05em 0 #50c878;
+  animation: rebirthNameGlitch 650ms infinite;
+  clip-path: polygon(0 0,100% 0,100% 45%,0 45%);
+  transform: translate(-.025em,-.0125em);
+}
+#hero .hero-name:hover .hero-name-greeting::after,
+#hero .hero-name:focus-visible .hero-name-greeting::after {
+  color: rgba(80,200,120,.2);
+  text-shadow: .05em 0 0 #ec2225, -.025em -.05em 0 #313f97,
+    .025em .05em 0 #50c878;
+  animation: rebirthNameGlitch 375ms infinite;
+  clip-path: polygon(0 65%,100% 20%,100% 100%,0 70%);
+  transform: translate(.0125em,.025em);
+}
+@media (prefers-reduced-motion: reduce) {
+  #hero .hero-name:hover .hero-name-greeting::before,
+  #hero .hero-name:hover .hero-name-greeting::after,
+  #hero .hero-name:focus-visible .hero-name-greeting::before,
+  #hero .hero-name:focus-visible .hero-name-greeting::after { animation: none; }
+}
+</style>
+
+
+
+<style id="rebirth-kkr-name-fit-and-discovery-cue">
+/* Give the full name a little extra clipping-safe room, especially at the final R. */
+#hero .hero-content { min-width: 0; }
+#hero .hero-name {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  font-size: clamp(40px, 5vw, 74px);
+  letter-spacing: -.068em;
+}
+#hero .hero-name-window {
+  width: 100%;
+  padding-right: .18em;
+  margin-right: -.18em;
+  overflow: hidden;
+}
+#hero .hero-name-main { width: max-content; max-width: none; }
+@media (max-width: 900px) {
+  #hero .hero-name { font-size: clamp(38px, 7.4vw, 66px); }
+}
+@media (max-width: 560px) {
+  #hero .hero-name { font-size: clamp(22px, 7.2vw, 38px); }
+}
+@media (max-width: 360px) {
+  #hero .hero-name { font-size: 21px; }
+}
+
+/* The welcome reveal stays clean. No RGB split or glitch animation on this text. */
+#hero .hero-name-greeting,
+#hero .hero-name:hover .hero-name-greeting,
+#hero .hero-name:focus-visible .hero-name-greeting {
+  color: #b9ccff;
+  text-shadow: 0 0 24px rgba(110,153,255,.32);
+}
+#hero .hero-name-greeting::before,
+#hero .hero-name-greeting::after { display: none !important; animation: none !important; }
+
+/* Transfer the RGB glitch interaction to the KKR monogram inside the globe. */
+#hero .globe-core {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+  cursor: pointer;
+  transition: color .2s ease, text-shadow .2s ease, transform .25s ease;
+}
+#hero .globe-core::before,
+#hero .globe-core::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  pointer-events: none;
+  opacity: 0;
+  white-space: nowrap;
+}
+#hero .globe-core:hover,
+#hero .globe-core:focus-visible {
+  color: rgba(0,194,203,.2);
+  text-shadow: .05em 0 0 #ec2225, -.025em -.05em 0 #313f97,
+    .025em .05em 0 #50c878;
+  transform: scale(1.06);
+  outline: none;
+}
+#hero .globe-core:hover::before,
+#hero .globe-core:focus-visible::before,
+#hero .globe-core:hover::after,
+#hero .globe-core:focus-visible::after { opacity: .8; }
+#hero .globe-core:hover::before,
+#hero .globe-core:focus-visible::before {
+  color: rgba(236,34,37,.2);
+  text-shadow: .05em 0 0 #ec2225, -.025em -.05em 0 #313f97,
+    .025em .05em 0 #50c878;
+  animation: rebirthNameGlitch 650ms infinite;
+  clip-path: polygon(0 0,100% 0,100% 45%,0 45%);
+  transform: translate(-.025em,-.0125em);
+}
+#hero .globe-core:hover::after,
+#hero .globe-core:focus-visible::after {
+  color: rgba(80,200,120,.2);
+  text-shadow: .05em 0 0 #ec2225, -.025em -.05em 0 #313f97,
+    .025em .05em 0 #50c878;
+  animation: rebirthNameGlitch 375ms infinite;
+  clip-path: polygon(0 65%,100% 20%,100% 100%,0 70%);
+  transform: translate(.0125em,.025em);
+}
+@media (prefers-reduced-motion: reduce) {
+  #hero .globe-core:hover::before,
+  #hero .globe-core:hover::after,
+  #hero .globe-core:focus-visible::before,
+  #hero .globe-core:focus-visible::after { animation: none; }
+}
+</style>
+
+
+
+<style id="rebirth-final-interaction-pass">
+/* Keep the hero name and greeting clean: no RGB glitch on either state. */
+#hero .hero-name-main,
+#hero .hero-name:hover .hero-name-main,
+#hero .hero-name:focus-visible .hero-name-main {
+  color: var(--text-primary) !important;
+  text-shadow: none !important;
+}
+#hero .hero-name-main::before,
+#hero .hero-name-main::after,
+#hero .hero-name-greeting::before,
+#hero .hero-name-greeting::after {
+  display: none !important;
+  content: none !important;
+  animation: none !important;
+}
+#hero .hero-name-greeting,
+#hero .hero-name:hover .hero-name-greeting,
+#hero .hero-name:focus-visible .hero-name-greeting {
+  color: #b9ccff !important;
+  text-shadow: 0 0 24px rgba(110,153,255,.32) !important;
+}
+
+/* The globe itself and its KKR monogram share the same glitch hover target. */
+#hero .globe-core {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+  cursor: pointer;
+  transition: color .2s ease, text-shadow .2s ease, transform .25s ease;
+}
+#hero .globe-core::before,
+#hero .globe-core::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  pointer-events: none;
+  opacity: 0;
+  white-space: nowrap;
+}
+#hero .visual-globe:hover .globe-core,
+#hero .globe-core:hover,
+#hero .globe-core:focus-visible {
+  color: rgba(0,194,203,.2);
+  text-shadow: .05em 0 0 #ec2225, -.025em -.05em 0 #313f97,
+    .025em .05em 0 #50c878;
+  transform: scale(1.06);
+  outline: none;
+}
+#hero .visual-globe:hover .globe-core::before,
+#hero .visual-globe:hover .globe-core::after,
+#hero .globe-core:hover::before,
+#hero .globe-core:hover::after,
+#hero .globe-core:focus-visible::before,
+#hero .globe-core:focus-visible::after { opacity: .8; }
+#hero .visual-globe:hover .globe-core::before,
+#hero .globe-core:hover::before,
+#hero .globe-core:focus-visible::before {
+  color: rgba(236,34,37,.2);
+  text-shadow: .05em 0 0 #ec2225, -.025em -.05em 0 #313f97,
+    .025em .05em 0 #50c878;
+  animation: rebirthNameGlitch 650ms infinite;
+  clip-path: polygon(0 0,100% 0,100% 45%,0 45%);
+  transform: translate(-.025em,-.0125em);
+}
+#hero .visual-globe:hover .globe-core::after,
+#hero .globe-core:hover::after,
+#hero .globe-core:focus-visible::after {
+  color: rgba(80,200,120,.2);
+  text-shadow: .05em 0 0 #ec2225, -.025em -.05em 0 #313f97,
+    .025em .05em 0 #50c878;
+  animation: rebirthNameGlitch 375ms infinite;
+  clip-path: polygon(0 65%,100% 20%,100% 100%,0 70%);
+  transform: translate(.0125em,.025em);
+}
+
+/* One-time greeting: start 1 second after the browser finishes loading. */
+#hero .hero-name.auto-greeting .hero-name-track {
+  transform: translateY(-1.08em);
+}
+@media (prefers-reduced-motion: reduce) {
+  #hero .visual-globe:hover .globe-core::before,
+  #hero .visual-globe:hover .globe-core::after,
+  #hero .globe-core:hover::before,
+  #hero .globe-core:hover::after,
+  #hero .globe-core:focus-visible::before,
+  #hero .globe-core:focus-visible::after { animation: none; }
+}
+</style>
+
+
+<script id="rebirth-one-time-greeting">
+(() => {
+  const startGreeting = () => {
+    const heading = document.querySelector('#hero .hero-name');
+    if (!heading || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    window.setTimeout(() => {
+      heading.classList.add('auto-greeting');
+      window.setTimeout(() => heading.classList.remove('auto-greeting'), 1760);
+    }, 1000);
+  };
+  if (document.readyState === 'complete') startGreeting();
+  else window.addEventListener('load', startGreeting, { once: true });
+})();
+</script>
+
+
+<style id="journey-timeline-vertical-animation-fix">
+
+/* Journey timeline: vertical, scroll-revealed layout */
+.journey-wrap .journey-track{
+  display:flex !important; flex-direction:column !important; align-items:stretch !important;
+  gap:0 !important; margin:0 auto !important; max-width:900px !important;
+  padding:0 0 0 34px !important; position:relative !important;
+}
+.journey-wrap .journey-track:before{
+  content:""; position:absolute !important; left:8px !important; top:8px !important;
+  bottom:12px !important; right:auto !important; width:2px !important; height:auto !important;
+  background:rgba(129,159,224,.22) !important;
+}
+.journey-wrap .journey-progress{
+  position:absolute !important; left:8px !important; top:8px !important; bottom:auto !important;
+  right:auto !important; width:2px !important; height:0 !important;
+  background:linear-gradient(180deg,#6295ff,#a78bfa) !important;
+  box-shadow:0 0 14px rgba(117,156,255,.8) !important;
+  transform-origin:top center !important; transition:height 1.4s cubic-bezier(.2,.8,.2,1) !important;
+}
+.journey-wrap .journey-track--in .journey-progress{height:calc(100% - 20px) !important;width:2px !important}
+.journey-wrap .journey-item{
+  display:block !important; min-height:112px !important; padding:0 0 30px 0 !important;
+  margin:0 !important; opacity:0 !important; transform:translateY(24px) !important;
+  transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1) !important;
+}
+.journey-wrap .journey-item:last-child{padding-bottom:0 !important;min-height:70px !important}
+.journey-wrap .journey-item:before{
+  left:-32px !important; top:3px !important; width:12px !important; height:12px !important;
+  transform:scale(.35) !important; opacity:.25 !important;
+  transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .45s,box-shadow .45s !important;
+}
+.journey-wrap .journey-item > div,.journey-wrap .journey-year{
+  display:block !important; opacity:0 !important; transform:translateX(18px) !important;
+  transition:opacity .55s ease,transform .55s cubic-bezier(.2,.8,.2,1) !important;
+}
+.journey-wrap .journey-item--in{opacity:1 !important;transform:translateY(0) !important}
+.journey-wrap .journey-item--in:before{opacity:1 !important;transform:scale(1) !important;box-shadow:0 0 0 4px rgba(139,174,255,.10),0 0 22px rgba(111,153,255,.8) !important}
+.journey-wrap .journey-item--in > div,.journey-wrap .journey-item--in .journey-year{opacity:1 !important;transform:translateX(0) !important}
+.journey-wrap .journey-item--in:nth-of-type(2) > div,.journey-wrap .journey-item--in:nth-of-type(2) .journey-year{transition-delay:.08s !important}
+.journey-wrap .journey-item--in:nth-of-type(3) > div,.journey-wrap .journey-item--in:nth-of-type(3) .journey-year{transition-delay:.16s !important}
+.journey-wrap .journey-item--in:nth-of-type(4) > div,.journey-wrap .journey-item--in:nth-of-type(4) .journey-year{transition-delay:.24s !important}
+.journey-wrap .journey-item--in:nth-of-type(5) > div,.journey-wrap .journey-item--in:nth-of-type(5) .journey-year{transition-delay:.32s !important}
+.journey-wrap .journey-item--in:nth-of-type(6) > div,.journey-wrap .journey-item--in:nth-of-type(6) .journey-year{transition-delay:.40s !important}
+.journey-wrap .journey-year{font-size:11px !important;letter-spacing:.14em !important;margin:0 0 5px !important}
+.journey-wrap .journey-item h4{margin:0 0 6px !important;font-size:16px !important}
+.journey-wrap .journey-item p{max-width:650px !important}
+@media(prefers-reduced-motion:reduce){
+ .journey-wrap .journey-item,.journey-wrap .journey-item:before,.journey-wrap .journey-item > div,.journey-wrap .journey-year,.journey-wrap .journey-progress{transition:none !important;transform:none !important;opacity:1 !important}
+ .journey-wrap .journey-progress{height:calc(100% - 20px) !important}
+}
+
+</style>
+<script id="journey-timeline-animation-fix">
+(() => {
+  const initJourney = () => {
+    const track = document.querySelector('.journey-wrap .journey-track');
+    if (!track) return;
+    const items = Array.from(track.querySelectorAll('.journey-item'));
+    const progress = track.querySelector('.journey-progress');
+    if (!items.length) return;
+
+    // Every item is observed in both directions: entering reveals it,
+    // leaving removes the state so its CSS transition plays in reverse.
+    if ('IntersectionObserver' in window) {
+      const itemObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          entry.target.classList.toggle('journey-item--in', entry.isIntersecting);
+        });
+      }, { root: null, rootMargin: '-8% 0px -12% 0px', threshold: 0 });
+      items.forEach(item => itemObserver.observe(item));
+    } else {
+      items.forEach(item => item.classList.add('journey-item--in'));
+    }
+
+    // Link-line follows the user's scroll position, so it grows downward
+    // while scrolling down and shrinks upward while scrolling back up.
+    let ticking = false;
+    const updateProgress = () => {
+      if (!progress) return;
+      const rect = track.getBoundingClientRect();
+      const viewportMark = window.innerHeight * 0.72;
+      const total = Math.max(track.scrollHeight, 1);
+      const travelled = Math.min(total, Math.max(0, viewportMark - rect.top));
+      const ratio = Math.max(0, Math.min(1, travelled / total));
+      progress.style.height = (ratio * Math.max(0, total - 20)) + 'px';
+      ticking = false;
+    };
+    const requestProgress = () => {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(updateProgress);
+      }
+    };
+    window.addEventListener('scroll', requestProgress, { passive: true });
+    window.addEventListener('resize', requestProgress);
+    updateProgress();
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initJourney, { once: true });
+  else initJourney();
+})();
+</script>
+
 </body>
 </html>
+
+
+<style id="journey-timeline-logo-markers">
+.journey-wrap .journey-body{display:flex!important;align-items:center!important;gap:15px!important;min-width:0}
+.journey-wrap .journey-logo{display:block!important;flex:0 0 48px!important;width:48px!important;height:48px!important;object-fit:contain!important;padding:6px!important;border-radius:13px!important;background:rgba(255,255,255,.94)!important;border:1px solid rgba(143,174,255,.25)!important;box-shadow:0 5px 18px rgba(0,0,0,.22),0 0 16px rgba(111,153,255,.12)!important;opacity:0!important;transform:scale(.72) rotate(-7deg)!important;transition:opacity .55s ease,transform .6s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease!important}
+.journey-wrap .journey-item--in .journey-logo{opacity:1!important;transform:scale(1) rotate(0)!important;box-shadow:0 5px 18px rgba(0,0,0,.22),0 0 20px rgba(111,153,255,.22)!important}
+.journey-wrap .journey-copy{min-width:0}
+.journey-wrap .journey-item:nth-child(2) .journey-logo{transition-delay:.08s!important}
+.journey-wrap .journey-item:nth-child(3) .journey-logo{transition-delay:.16s!important}
+.journey-wrap .journey-item:nth-child(4) .journey-logo{transition-delay:.24s!important}
+.journey-wrap .journey-item:nth-child(5) .journey-logo{transition-delay:.32s!important}
+.journey-wrap .journey-item:nth-child(6) .journey-logo{transition-delay:.40s!important}
+@media(max-width:560px){.journey-wrap .journey-body{gap:11px!important}.journey-wrap .journey-logo{flex-basis:40px!important;width:40px!important;height:40px!important;padding:5px!important}}
+@media(prefers-reduced-motion:reduce){.journey-wrap .journey-logo{transition:none!important;opacity:1!important;transform:none!important}}
+</style>
