@@ -924,6 +924,9 @@
 }
 </style>
 
+
+
+
 </head>
 <body>
 <div id="cursor-glow" aria-hidden="true"></div>
@@ -2674,6 +2677,235 @@ a:focus-visible,button:focus-visible{outline:2px solid #9ab8ff;outline-offset:4p
   else initJourney();
 })();
 </script>
+
+<style id="kixo-mobile-layout-repair">
+/* Mobile-only repair. Desktop/tablet styling remains unchanged. */
+@media (max-width: 700px) {
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  #hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    justify-items: stretch;
+    min-height: 100svh;
+    height: auto;
+    padding: max(92px, env(safe-area-inset-top)) 22px 48px;
+    gap: 18px;
+    text-align: left;
+  }
+
+  #hero .hero-content {
+    width: 100%;
+    max-width: 520px;
+    min-width: 0;
+    margin: 0 auto;
+    text-align: left;
+    z-index: 3;
+  }
+
+  #hero .hero-badge {
+    display: inline-flex;
+    max-width: 100%;
+    margin: 0 0 22px;
+    padding: 7px 12px;
+    font-size: 10px;
+    letter-spacing: .075em;
+    white-space: normal;
+  }
+
+  #hero .hero-name {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 16px;
+    font-size: clamp(30px, 9.4vw, 43px) !important;
+    line-height: 1.08;
+    letter-spacing: -.065em;
+    text-align: left;
+  }
+
+  #hero .hero-name-window {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+    padding: 0;
+    margin: 0;
+  }
+
+  #hero .hero-name-track,
+  #hero .hero-name-main,
+  #hero .hero-name-greeting {
+    white-space: nowrap;
+  }
+
+  #hero .hero-headline {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 20px;
+    font-size: clamp(18px, 5.2vw, 22px);
+    line-height: 1.48;
+    letter-spacing: -.025em;
+    font-weight: 500;
+    text-align: left !important;
+    text-wrap: pretty;
+  }
+
+  /* Remove the desktop-authored hard break so both lines wrap naturally. */
+  #hero .hero-headline br {
+    display: none;
+  }
+
+  #hero .hero-headline em {
+    display: inline;
+  }
+
+  #hero .hero-subheadline {
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px 10px;
+    margin: 0 0 24px;
+    text-align: left;
+  }
+
+  #hero .hero-role-tag {
+    font-size: 9px;
+    line-height: 1.45;
+    letter-spacing: .075em;
+  }
+
+  #hero .hero-ctas {
+    display: flex;
+    width: min(100%, 310px);
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 11px;
+    margin: 0;
+  }
+
+  #hero .hero-ctas .btn-primary,
+  #hero .hero-ctas .btn-secondary {
+    display: flex;
+    width: 100%;
+    min-height: 49px;
+    justify-content: center;
+    align-items: center;
+    padding: 13px 18px;
+    font-size: 13.5px;
+    white-space: nowrap;
+  }
+
+  /* Keep the spectral ribbon visible in the lower hero, away from the CTAs. */
+  #hero-chromatic-wave {
+    inset: auto 0 0;
+    top: 54%;
+    width: 100%;
+    height: 46%;
+    z-index: 1;
+    opacity: .78;
+  }
+
+  #hero .hero-visual {
+    width: 100%;
+    max-width: 420px;
+    min-height: 245px;
+    margin: 0 auto;
+    z-index: 2;
+    overflow: visible;
+  }
+
+  #hero .visual-globe {
+    width: clamp(175px, 55vw, 220px);
+  }
+
+  #hero .visual-orbit {
+    max-width: 90%;
+  }
+
+  #hero .tech-node {
+    max-width: 108px;
+    padding: 7px 8px;
+    font-size: 7px;
+    letter-spacing: .09em;
+  }
+
+  #hero .node-health { left: 1%; }
+  #hero .node-data { right: 1%; }
+  #hero .node-ai { left: 2%; }
+  #hero .node-cloud { right: 2%; }
+
+  #hero .hero-scroll {
+    display: none;
+  }
+
+  /* Prevent long text and cards elsewhere from creating sideways scrolling. */
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .about-grid,
+  .contact-inner,
+  .leadership-inner,
+  .project-inner {
+    min-width: 0;
+  }
+
+  .project-card,
+  .leadership-card,
+  .experience-card,
+  .education-card,
+  .achievement-card,
+  .skill-category {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .contact-email-link {
+    max-width: 100%;
+    font-size: clamp(16px, 4.6vw, 20px);
+    overflow-wrap: anywhere;
+  }
+
+  .footer-inner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 380px) {
+  #hero {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  #hero .hero-name {
+    font-size: clamp(28px, 9.1vw, 34px) !important;
+  }
+
+  #hero .hero-role-tag {
+    font-size: 8px;
+  }
+
+  #hero .hero-visual {
+    min-height: 220px;
+  }
+
+  #hero .visual-globe {
+    width: 175px;
+  }
+}
+</style>
 
 </body>
 </html>
