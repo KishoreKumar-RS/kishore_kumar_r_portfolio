@@ -2980,46 +2980,7 @@ a:focus-visible,button:focus-visible{outline:2px solid #9ab8ff;outline-offset:4p
 }
 </style>
 
-<script id="kixo-mobile-greeting-toggle">
-(() => {
-  const init = () => {
-    const heading = document.querySelector('#hero .hero-name');
-    if (!heading || heading.dataset.mobileGreetingReady === 'true') return;
-    if (!window.matchMedia('(max-width: 700px)').matches) return;
 
-    heading.dataset.mobileGreetingReady = 'true';
-
-    // Show the greeting one second after page load and leave it visible.
-    window.setTimeout(() => {
-      heading.classList.add('auto-greeting');
-    }, 1000);
-
-    // Tapping the heading toggles between the name and greeting.
-    heading.setAttribute('role', 'button');
-    heading.setAttribute('tabindex', '0');
-    heading.setAttribute('aria-label', 'Show or hide greeting');
-
-    const toggleGreeting = () => {
-      heading.classList.toggle('is-greeting');
-      heading.classList.remove('auto-greeting');
-    };
-
-    heading.addEventListener('click', toggleGreeting);
-    heading.addEventListener('keydown', event => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        toggleGreeting();
-      }
-    });
-  };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init, { once: true });
-  } else {
-    init();
-  }
-})();
-</script>
 
 </body>
 </html>
@@ -3038,3 +2999,160 @@ a:focus-visible,button:focus-visible{outline:2px solid #9ab8ff;outline-offset:4p
 @media(max-width:560px){.journey-wrap .journey-body{gap:11px!important}.journey-wrap .journey-logo{flex-basis:40px!important;width:40px!important;height:40px!important;padding:5px!important}}
 @media(prefers-reduced-motion:reduce){.journey-wrap .journey-logo{transition:none!important;opacity:1!important;transform:none!important}}
 </style>
+
+
+<style id="kixo-mobile-greeting-timed-and-journey-progress">
+@media (max-width: 700px) {
+  /* Mobile greeting is a short reveal, then it returns to the name. */
+  #hero .hero-name-window {
+    display: block !important;
+    height: 1.08em !important;
+    overflow: hidden !important;
+    position: relative !important;
+  }
+
+  #hero .hero-name-track {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    transform: translateY(0) !important;
+    transition: transform 520ms cubic-bezier(.2,.8,.2,1) !important;
+    will-change: transform;
+  }
+
+  #hero .hero-name-main,
+  #hero .hero-name-greeting {
+    display: block !important;
+    visibility: visible !important;
+    height: 1.08em !important;
+    line-height: 1.08 !important;
+    white-space: nowrap !important;
+  }
+
+  #hero .hero-name-greeting {
+    font-size: .58em !important;
+    color: #b9ccff !important;
+  }
+
+  #hero .hero-name.auto-greeting .hero-name-track,
+  #hero .hero-name.is-greeting .hero-name-track,
+  #hero .hero-name:hover .hero-name-track,
+  #hero .hero-name:focus-visible .hero-name-track {
+    transform: translateY(-1.08em) !important;
+  }
+}
+
+/* Scroll-driven journey line. The old height rules are deliberately
+   overridden with higher specificity; progress is now a scale transform. */
+.journey-wrap .journey-track .journey-progress,
+.journey-wrap .journey-track.journey-track--in .journey-progress {
+  position: absolute !important;
+  left: 8px !important;
+  right: auto !important;
+  top: 8px !important;
+  bottom: 12px !important;
+  width: 2px !important;
+  height: auto !important;
+  background: linear-gradient(180deg, #6295ff 0%, #a78bfa 55%, #6de6ff 100%) !important;
+  box-shadow: 0 0 8px rgba(117,156,255,.85), 0 0 18px rgba(117,156,255,.38) !important;
+  transform: scaleY(var(--journey-progress, 0)) !important;
+  transform-origin: top center !important;
+  transition: transform 90ms linear !important;
+  will-change: transform;
+  z-index: 2 !important;
+  pointer-events: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journey-wrap .journey-track .journey-progress,
+  .journey-wrap .journey-track.journey-track--in .journey-progress {
+    transform: scaleY(1) !important;
+    transition: none !important;
+  }
+}
+</style>
+
+<script id="kixo-mobile-greeting-timer-and-scroll-line">
+(() => {
+  const init = () => {
+    const heading = document.querySelector('#hero .hero-name');
+    const isMobile = window.matchMedia('(max-width: 700px)').matches;
+
+    if (heading && isMobile && heading.dataset.greetingTimerReady !== 'true') {
+      heading.dataset.greetingTimerReady = 'true';
+      heading.setAttribute('role', 'button');
+      heading.setAttribute('tabindex', '0');
+      heading.setAttribute('aria-label', 'Tap to reveal greeting');
+
+      let greetingTimer = 0;
+
+      const showGreetingBriefly = () => {
+        window.clearTimeout(greetingTimer);
+        heading.classList.remove('auto-greeting');
+        heading.classList.add('is-greeting');
+        greetingTimer = window.setTimeout(() => {
+          heading.classList.remove('is-greeting');
+        }, 1000);
+      };
+
+      // Initial greeting appears after one second, then slides back one second later.
+      window.setTimeout(showGreetingBriefly, 1000);
+
+      // Every tap restarts the one-second greeting window.
+      heading.addEventListener('click', showGreetingBriefly);
+      heading.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          showGreetingBriefly();
+        }
+      });
+    }
+
+    const track = document.querySelector('.journey-wrap .journey-track');
+    if (!track || track.dataset.scrollLineReady === 'true') return;
+    track.dataset.scrollLineReady = 'true';
+
+    const progress = track.querySelector('.journey-progress');
+    if (!progress) return;
+
+    let framePending = false;
+
+    const updateJourneyLine = () => {
+      const rect = track.getBoundingClientRect();
+      const viewportDrawPoint = window.innerHeight * 0.72;
+      const trackHeight = Math.max(rect.height, 1);
+
+      // 0 before the timeline reaches the draw point, 1 after it passes.
+      const ratio = Math.max(0, Math.min(1,
+        (viewportDrawPoint - rect.top) / trackHeight
+      ));
+
+      track.style.setProperty('--journey-progress', ratio.toFixed(4));
+      framePending = false;
+    };
+
+    const requestJourneyUpdate = () => {
+      if (framePending) return;
+      framePending = true;
+      window.requestAnimationFrame(updateJourneyLine);
+    };
+
+    window.addEventListener('scroll', requestJourneyUpdate, { passive: true });
+    window.addEventListener('resize', requestJourneyUpdate, { passive: true });
+
+    if ('ResizeObserver' in window) {
+      const resizeObserver = new ResizeObserver(requestJourneyUpdate);
+      resizeObserver.observe(track);
+    }
+
+    updateJourneyLine();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+</script>
+
