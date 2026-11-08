@@ -3156,3 +3156,78 @@ a:focus-visible,button:focus-visible{outline:2px solid #9ab8ff;outline-offset:4p
 })();
 </script>
 
+<style id="kixo-mobile-greeting-sticky-hover-fix">
+@media (max-width: 700px) {
+  /*
+    Touch browsers can keep :hover active after a tap.
+    Explicitly make the class the ONLY mobile animation trigger.
+  */
+  #hero .hero-name:not(.is-greeting) .hero-name-track,
+  #hero .hero-name:not(.is-greeting):hover .hero-name-track,
+  #hero .hero-name:not(.is-greeting):focus .hero-name-track,
+  #hero .hero-name:not(.is-greeting):focus-visible .hero-name-track,
+  #hero .hero-name:not(.is-greeting).auto-greeting .hero-name-track {
+    transform: translateY(0) !important;
+  }
+
+  #hero .hero-name.is-greeting .hero-name-track,
+  #hero .hero-name.is-greeting:hover .hero-name-track,
+  #hero .hero-name.is-greeting:focus .hero-name-track,
+  #hero .hero-name.is-greeting:focus-visible .hero-name-track {
+    transform: translateY(-1.08em) !important;
+  }
+}
+</style>
+
+<script id="kixo-mobile-greeting-sticky-hover-controller">
+(() => {
+  const init = () => {
+    const heading = document.querySelector('#hero .hero-name');
+    if (!heading || !window.matchMedia('(max-width: 700px)').matches) return;
+    if (heading.dataset.greetingStickyFixReady === 'true') return;
+    heading.dataset.greetingStickyFixReady = 'true';
+
+    let returnTimer = null;
+
+    const returnToName = () => {
+      window.clearTimeout(returnTimer);
+      heading.classList.remove('is-greeting', 'auto-greeting');
+    };
+
+    const showGreeting = () => {
+      window.clearTimeout(returnTimer);
+      heading.classList.remove('auto-greeting');
+      heading.classList.add('is-greeting');
+
+      // A fresh timer on every activation; remove the class after 1000ms.
+      returnTimer = window.setTimeout(returnToName, 1000);
+    };
+
+    // Normalize any stale state left by earlier greeting scripts.
+    returnToName();
+
+    // Initial one-time greeting after page load, then automatic return.
+    window.setTimeout(showGreeting, 1000);
+
+    // Touch/click always starts a new one-second greeting interval.
+    heading.addEventListener('click', event => {
+      event.preventDefault();
+      showGreeting();
+    });
+
+    heading.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        showGreeting();
+      }
+    });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+</script>
+
