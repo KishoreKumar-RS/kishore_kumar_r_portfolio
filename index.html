@@ -1062,7 +1062,43 @@
   </div>
   <div class="journey-wrap reveal">
     <div class="journey-heading"><span class="eyebrow">THE ROAD SO FAR</span><h3>Journey <span class="gradient-text">Timeline</span></h3></div>
-    <div class="journey-track"><div class="journey-progress"></div>
+    <div class="journey-track"><svg class="journey-route" viewBox="0 0 1000 2100" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="journeyRouteGradientFixed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#76a8ff"/>
+      <stop offset="50%" stop-color="#a58aff"/>
+      <stop offset="100%" stop-color="#62e5ef"/>
+    </linearGradient>
+    <filter id="journeyRouteGlowFixed" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="glow"/>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <path class="journey-route-base journey-route-desktop"
+    d="M 120 90 C 120 280 880 280 880 470
+       C 880 660 120 660 120 850
+       C 120 1040 880 1040 880 1230
+       C 880 1420 120 1420 120 1610
+       C 120 1800 880 1800 880 1990"/>
+  <path class="journey-route-draw journey-route-desktop" pathLength="1"
+    d="M 120 90 C 120 280 880 280 880 470
+       C 880 660 120 660 120 850
+       C 120 1040 880 1040 880 1230
+       C 880 1420 120 1420 120 1610
+       C 120 1800 880 1800 880 1990"/>
+  <path class="journey-route-base journey-route-mobile" d="M 500 0 L 500 2100"/>
+  <path class="journey-route-draw journey-route-mobile" pathLength="1" d="M 500 0 L 500 2100"/>
+  <g class="journey-route-nodes">
+    <circle r="8"/><circle r="8"/><circle r="8"/>
+    <circle r="8"/><circle r="8"/><circle r="8"/>
+  </g>
+</svg>
+
+<svg class="journey-card-connectors" aria-hidden="true" preserveAspectRatio="none">
+  <g class="journey-card-connector-layer"></g>
+</svg>
+
+<div class="journey-progress" aria-hidden="true"></div>
       <article class="journey-item"><span class="journey-year">2022</span><div class="journey-body"><img class="journey-logo" src="data:image/png;base64,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" alt="Kalasalingam Academy emblem" loading="lazy" decoding="async"><div class="journey-copy"><h4>Started Computer Science</h4><p>Began the B.Tech journey at Kalasalingam Academy of Research and Education.</p></div></div></article>
       <article class="journey-item"><span class="journey-year">2024</span><div class="journey-body"><img class="journey-logo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Blender_badge.png" alt="Blender logo" loading="lazy" decoding="async"><div class="journey-copy"><h4>Blender Head · Frames24</h4><p>Led 3D creative work and mentored the club team through modelling and AR/VR challenge execution.</p></div></div></article>
       <article class="journey-item"><span class="journey-year">2025</span><div class="journey-body"><img class="journey-logo" src="https://commons.wikimedia.org/wiki/Special:FilePath/IEEE12010.png" alt="IEEE logo" loading="lazy" decoding="async"><div class="journey-copy"><h4>IEEE Publication</h4><p>Medipath presented at APCIT-2025 and indexed in IEEE Xplore.</p></div></div></article>
@@ -3221,6 +3257,501 @@ a:focus-visible,button:focus-visible{outline:2px solid #9ab8ff;outline-offset:4p
         showGreeting();
       }
     });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+</script>
+
+<style id="kixo-journey-actually-visible-v3">
+/* The timeline uses the six existing milestone articles already in the HTML. */
+.journey-wrap {
+  position: relative !important;
+  overflow: hidden !important;
+}
+.journey-track {
+  position: relative !important;
+  display: block !important;
+  height: 2100px !important;
+  min-height: 2100px !important;
+  margin-top: 24px !important;
+  overflow: visible !important;
+  isolation: isolate;
+}
+.journey-route {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  overflow: visible !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+.journey-route-mobile { display: none !important; }
+.journey-route-base,
+.journey-route-draw {
+  fill: none !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+.journey-route-base {
+  stroke: rgba(151,177,235,.24) !important;
+  stroke-width: 2.5px !important;
+}
+.journey-route-draw {
+  stroke: url(#journeyRouteGradientFixed) !important;
+  stroke-width: 3.5px !important;
+  filter: url(#journeyRouteGlowFixed);
+  stroke-dasharray: 1 !important;
+  stroke-dashoffset: calc(1 - var(--journey-draw-progress, 0)) !important;
+}
+.journey-route-nodes circle {
+  fill: #dce9ff !important;
+  stroke: #80a8ff !important;
+  stroke-width: 2px !important;
+  opacity: .18 !important;
+  filter: drop-shadow(0 0 4px rgba(125,165,255,.8));
+  transition: opacity .25s ease !important;
+}
+.journey-route-nodes circle.is-reached {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 5px #7caaff) drop-shadow(0 0 13px rgba(145,117,255,.8));
+}
+
+/* Hide cards until the route reaches the matching checkpoint. */
+.journey-track > article.journey-item {
+  position: absolute !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  width: min(39%, 390px) !important;
+  max-width: 390px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 20px 22px !important;
+  border: 1px solid rgba(146,174,240,.2) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(145deg,rgba(15,24,45,.97),rgba(8,14,28,.95)) !important;
+  box-shadow: 0 14px 40px rgba(0,0,0,.25),0 0 28px rgba(91,140,255,.07) !important;
+  backdrop-filter: blur(16px);
+  z-index: 3 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(22px) scale(.98) !important;
+  transition: opacity .38s ease,transform .48s cubic-bezier(.2,.8,.2,1),visibility .38s !important;
+}
+.journey-track > article.journey-item.journey-checkpoint-active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+/* Six cards, evenly spaced down the route, alternating sides. */
+.journey-track > article.journey-item:nth-of-type(1) { left: 55% !important; top: 1.5% !important; }
+.journey-track > article.journey-item:nth-of-type(2) { left: 6% !important; top: 18.5% !important; }
+.journey-track > article.journey-item:nth-of-type(3) { left: 55% !important; top: 35.5% !important; }
+.journey-track > article.journey-item:nth-of-type(4) { left: 6% !important; top: 52.5% !important; }
+.journey-track > article.journey-item:nth-of-type(5) { left: 55% !important; top: 69.5% !important; }
+.journey-track > article.journey-item:nth-of-type(6) { left: 6% !important; top: 86.5% !important; }
+
+.journey-track > article.journey-item .journey-year,
+.journey-track > article.journey-item .journey-body {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+.journey-track .journey-year {
+  display: inline-block !important;
+  margin: 0 0 9px !important;
+  color: #9dbaff !important;
+  font-size: 11px !important;
+  letter-spacing: .16em;
+  font-weight: 700;
+}
+.journey-track .journey-body { min-width: 0; }
+.journey-track .journey-logo {
+  display: block !important;
+  width: 42px !important;
+  height: 42px !important;
+  max-width: 100%;
+  object-fit: contain;
+  margin: 0 0 12px !important;
+  border-radius: 9px;
+}
+.journey-track .journey-copy h4 {
+  margin: 0 0 8px !important;
+  font-size: 16px !important;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.journey-track .journey-copy p {
+  margin: 0 !important;
+  color: #a2afc8 !important;
+  font-size: 12px !important;
+  line-height: 1.7 !important;
+  overflow-wrap: anywhere;
+}
+.journey-track > .journey-progress { display: none !important; }
+
+@media (min-width: 701px) and (max-width: 1050px) {
+  .journey-track > article.journey-item { width: 43% !important; padding: 17px !important; }
+  .journey-track > article.journey-item:nth-of-type(odd) { left: 53% !important; }
+  .journey-track > article.journey-item:nth-of-type(even) { left: 4% !important; }
+}
+
+/* Phones, including iPhone Safari: same six cards and checkpoint sequence,
+   presented as a single readable vertical route. */
+@media (max-width: 700px) {
+  .journey-wrap { padding: 26px 16px 30px !important; }
+  .journey-track {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 24px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin-top: 25px !important;
+    padding: 8px 0 8px 38px !important;
+  }
+  .journey-route {
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 28px !important;
+    height: 100% !important;
+  }
+  .journey-route-desktop { display: none !important; }
+  .journey-route-mobile { display: block !important; }
+  .journey-track > article.journey-item,
+  .journey-track > article.journey-item:nth-of-type(n) {
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 17px 16px 19px !important;
+    transform: translateY(18px) scale(.985) !important;
+  }
+  .journey-track > article.journey-item.journey-checkpoint-active {
+    transform: translateY(0) scale(1) !important;
+  }
+  .journey-track .journey-logo { width: 38px !important; height: 38px !important; }
+  .journey-track .journey-copy h4 { font-size: 15px !important; }
+  .journey-track .journey-copy p { font-size: 12px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey-track > article.journey-item { transition: none !important; }
+}
+</style>
+
+<script id="kixo-journey-checkpoints-final-engine">
+(() => {
+  const init = () => {
+    const track = document.querySelector('.journey-track');
+    if (!track || track.dataset.journeyFinalEngine === 'ready') return;
+    track.dataset.journeyFinalEngine = 'ready';
+
+    const cards = Array.from(track.children).filter(el => el.matches('article.journey-item'));
+    const circles = Array.from(track.querySelectorAll('.journey-route-nodes circle'));
+    const desktopPath = track.querySelector('.journey-route-draw.journey-route-desktop');
+    const mobilePath = track.querySelector('.journey-route-draw.journey-route-mobile');
+    if (!cards.length || !desktopPath || !mobilePath || circles.length !== cards.length) {
+      console.error('Journey timeline setup mismatch:', {cards: cards.length, circles: circles.length});
+      return;
+    }
+
+    const checkpoints = cards.map((_, i) => 0.025 + i * (0.95 / Math.max(cards.length - 1, 1)));
+    let activePath = null;
+    let mobileMode = null;
+    let raf = 0;
+
+    const selectPath = () => {
+      const isMobile = window.matchMedia('(max-width: 700px)').matches;
+      if (mobileMode === isMobile) return;
+      mobileMode = isMobile;
+      activePath = isMobile ? mobilePath : desktopPath;
+
+      if (isMobile) {
+        circles.forEach((circle, i) => {
+          circle.setAttribute('cx', '500');
+          circle.setAttribute('cy', String(2100 * checkpoints[i]));
+        });
+      } else {
+        const len = activePath.getTotalLength();
+        circles.forEach((circle, i) => {
+          const point = activePath.getPointAtLength(len * checkpoints[i]);
+          circle.setAttribute('cx', String(point.x));
+          circle.setAttribute('cy', String(point.y));
+        });
+      }
+    };
+
+    const update = () => {
+      selectPath();
+
+      const rect = track.getBoundingClientRect();
+      const triggerY = window.innerHeight * 0.72;
+      const progress = Math.max(0, Math.min(1,
+        (triggerY - rect.top) / Math.max(rect.height, 1)
+      ));
+
+      track.style.setProperty('--journey-draw-progress', String(progress));
+      activePath.style.strokeDasharray = '1';
+      activePath.style.strokeDashoffset = String(1 - progress);
+
+      cards.forEach((card, i) => {
+        const reached = progress >= checkpoints[i];
+        card.classList.toggle('journey-checkpoint-active', reached);
+        circles[i].classList.toggle('is-reached', reached);
+        card.setAttribute('aria-hidden', reached ? 'false' : 'true');
+      });
+      raf = 0;
+    };
+
+    const schedule = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', schedule, {passive: true});
+    window.addEventListener('resize', schedule, {passive: true});
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(schedule);
+      ro.observe(track);
+    }
+
+    update();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, {once: true});
+  } else {
+    init();
+  }
+})();
+</script>
+
+<style id="kixo-journey-card-connector-styles">
+.journey-track {
+  position: relative !important;
+}
+.journey-card-connectors {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+}
+.journey-card-connector {
+  fill: none;
+  stroke: rgba(225, 235, 255, .94);
+  stroke-width: 1.65;
+  stroke-linecap: round;
+  stroke-dasharray: 1 8;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  filter: drop-shadow(0 0 3px rgba(145, 177, 255, .75));
+  transition:
+    stroke-dashoffset .72s cubic-bezier(.2,.75,.25,1),
+    opacity .28s ease;
+}
+.journey-card-connector.is-connected {
+  stroke-dashoffset: 0;
+  opacity: .95;
+}
+.journey-card-connector-end {
+  fill: #dce9ff;
+  stroke: rgba(124, 164, 255, .95);
+  stroke-width: 1.4;
+  opacity: 0;
+  filter: drop-shadow(0 0 5px rgba(124, 164, 255, .9));
+  transition: opacity .25s ease;
+}
+.journey-card-connector-end.is-connected {
+  opacity: 1;
+}
+
+/* Keep connector endpoints tucked just under the card edge. */
+.journey-track > article.journey-item {
+  z-index: 3 !important;
+}
+@media (max-width: 700px) {
+  .journey-card-connector {
+    stroke-width: 1.5;
+    stroke-dasharray: 1 6;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey-card-connector,
+  .journey-card-connector-end {
+    transition: none !important;
+  }
+}
+</style>
+
+<script id="kixo-journey-card-connector-engine">
+(() => {
+  const init = () => {
+    const track = document.querySelector('.journey-track');
+    if (!track || track.dataset.connectorEngineReady === 'true') return;
+    track.dataset.connectorEngineReady = 'true';
+
+    const connectorSvg = track.querySelector('.journey-card-connectors');
+    const connectorLayer = connectorSvg && connectorSvg.querySelector('.journey-card-connector-layer');
+    const cards = Array.from(track.children).filter(node => node.matches('article.journey-item'));
+    const desktopPath = track.querySelector('.journey-route-desktop.journey-route-draw');
+    const mobilePath = track.querySelector('.journey-route-mobile.journey-route-draw');
+
+    if (!connectorSvg || !connectorLayer || !cards.length || !desktopPath || !mobilePath) return;
+
+    const ns = 'http://www.w3.org/2000/svg';
+    const thresholds = cards.map((_, i) =>
+      cards.length === 1 ? .5 : .025 + i * (.95 / (cards.length - 1))
+    );
+
+    const connectors = cards.map((card, i) => {
+      const path = document.createElementNS(ns, 'path');
+      path.setAttribute('class', 'journey-card-connector');
+      path.setAttribute('pathLength', '1');
+      path.setAttribute('data-card-index', String(i));
+
+      const endpoint = document.createElementNS(ns, 'circle');
+      endpoint.setAttribute('class', 'journey-card-connector-end');
+      endpoint.setAttribute('r', '3.1');
+      endpoint.setAttribute('data-card-index', String(i));
+
+      connectorLayer.append(path, endpoint);
+      return { path, endpoint, card };
+    });
+
+    let currentPath = null;
+    let currentMode = '';
+    let frame = 0;
+
+    const svgPointToTrack = (path, distance, trackRect) => {
+      const length = path.getTotalLength();
+      const point = path.getPointAtLength(length * distance);
+      const svgPoint = document.createElementNS(ns, 'svg').createSVGPoint();
+      svgPoint.x = point.x;
+      svgPoint.y = point.y;
+      const screenPoint = svgPoint.matrixTransform(path.getScreenCTM());
+      return {
+        x: screenPoint.x - trackRect.left,
+        y: screenPoint.y - trackRect.top
+      };
+    };
+
+    const nearestCardEdge = (cardRect, trackRect, start) => {
+      const rect = {
+        left: cardRect.left - trackRect.left,
+        right: cardRect.right - trackRect.left,
+        top: cardRect.top - trackRect.top,
+        bottom: cardRect.bottom - trackRect.top
+      };
+
+      const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+      const candidates = [
+        { x: rect.left, y: clamp(start.y, rect.top + 12, rect.bottom - 12) },
+        { x: rect.right, y: clamp(start.y, rect.top + 12, rect.bottom - 12) },
+        { x: clamp(start.x, rect.left + 12, rect.right - 12), y: rect.top },
+        { x: clamp(start.x, rect.left + 12, rect.right - 12), y: rect.bottom }
+      ];
+
+      let best = candidates[0];
+      let bestDistance = Infinity;
+      candidates.forEach(candidate => {
+        const d = Math.hypot(candidate.x - start.x, candidate.y - start.y);
+        if (d < bestDistance) {
+          bestDistance = d;
+          best = candidate;
+        }
+      });
+      return best;
+    };
+
+    const buildConnector = (start, end, isMobile) => {
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
+      if (isMobile) {
+        const bend = Math.max(12, Math.abs(dx) * .48);
+        const direction = dx >= 0 ? 1 : -1;
+        return `M ${start.x} ${start.y} C ${start.x + direction * bend} ${start.y}, ${end.x - direction * bend * .35} ${end.y}, ${end.x} ${end.y}`;
+      }
+
+      const distance = Math.hypot(dx, dy);
+      const pull = Math.min(100, Math.max(34, distance * .32));
+      const direction = dx >= 0 ? 1 : -1;
+      return `M ${start.x} ${start.y} C ${start.x + direction * pull} ${start.y}, ${end.x - direction * pull} ${end.y}, ${end.x} ${end.y}`;
+    };
+
+    const update = () => {
+      const isMobile = window.matchMedia('(max-width: 700px)').matches;
+      const mode = isMobile ? 'mobile' : 'desktop';
+      if (mode !== currentMode) {
+        currentMode = mode;
+        currentPath = isMobile ? mobilePath : desktopPath;
+      }
+
+      const trackRect = track.getBoundingClientRect();
+      const width = Math.max(track.clientWidth, 1);
+      const height = Math.max(track.clientHeight, 1);
+      connectorSvg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+      const triggerY = window.innerHeight * .72;
+      const progress = Math.max(0, Math.min(1,
+        (triggerY - trackRect.top) / Math.max(trackRect.height, 1)
+      ));
+
+      connectors.forEach((entry, index) => {
+        const checkpoint = thresholds[index];
+        const reached = progress >= checkpoint;
+
+        // Use the exact same path checkpoint as the main route node.
+        const start = svgPointToTrack(currentPath, checkpoint, trackRect);
+        const cardRect = entry.card.getBoundingClientRect();
+        const end = nearestCardEdge(cardRect, trackRect, start);
+
+        entry.path.setAttribute('d', buildConnector(start, end, isMobile));
+        entry.endpoint.setAttribute('cx', String(end.x));
+        entry.endpoint.setAttribute('cy', String(end.y));
+
+        entry.path.classList.toggle('is-connected', reached);
+        entry.endpoint.classList.toggle('is-connected', reached);
+      });
+
+      frame = 0;
+    };
+
+    const schedule = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule, { passive: true });
+
+    if ('ResizeObserver' in window) {
+      const observer = new ResizeObserver(schedule);
+      observer.observe(track);
+      cards.forEach(card => observer.observe(card));
+    }
+
+    // Cards transition from hidden to visible on checkpoint crossing.
+    // Recalculate connector endpoints after those layout transitions begin/end.
+    cards.forEach(card => {
+      card.addEventListener('transitionend', schedule);
+    });
+
+    update();
   };
 
   if (document.readyState === 'loading') {
