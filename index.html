@@ -2908,38 +2908,63 @@ a:focus-visible,button:focus-visible{outline:2px solid #9ab8ff;outline-offset:4p
 </style>
 
 
-<style id="kixo-mobile-greeting-and-wave-final-fix">
+
+
+
+<style id="kixo-mobile-greeting-and-wave-v2">
 @media (max-width: 700px) {
-  /* Mobile keeps the real name visible. The rotating greeting is desktop-only. */
+  /* Restore the two-state name animation on mobile. */
   #hero .hero-name-window {
+    display: block !important;
     height: 1.08em !important;
     overflow: hidden !important;
+    position: relative;
   }
 
-  #hero .hero-name-track,
-  #hero .hero-name:hover .hero-name-track,
-  #hero .hero-name:focus-visible .hero-name-track,
-  #hero .hero-name.auto-greeting .hero-name-track {
+  #hero .hero-name-track {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
     transform: translateY(0) !important;
+    transition: transform 560ms cubic-bezier(.2,.8,.2,1) !important;
+    will-change: transform;
+  }
+
+  #hero .hero-name-main,
+  #hero .hero-name-greeting {
+    display: block !important;
+    visibility: visible !important;
+    height: 1.08em !important;
+    line-height: 1.08 !important;
+    white-space: nowrap !important;
   }
 
   #hero .hero-name-greeting {
-    display: none !important;
-    visibility: hidden !important;
+    font-size: .58em !important;
+    color: #b9ccff !important;
   }
 
-  /* Put the animated spectral ribbon directly behind the description.
-     It no longer occupies the globe's vertical area. */
+  #hero .hero-name.auto-greeting .hero-name-track,
+  #hero .hero-name.is-greeting .hero-name-track,
+  #hero .hero-name:hover .hero-name-track,
+  #hero .hero-name:focus-visible .hero-name-track {
+    transform: translateY(-1.08em) !important;
+  }
+
+  /* Spectral ribbon: centered in the gap between the name and description.
+     Scale vertically to make the ribbon visibly thicker on phone screens. */
   #hero-chromatic-wave {
     position: absolute !important;
-    top: 23% !important;
+    top: 19% !important;
     right: 0 !important;
     bottom: auto !important;
     left: 0 !important;
     width: 100% !important;
-    height: 18% !important;
+    height: 8% !important;
     z-index: 1 !important;
-    opacity: .82 !important;
+    opacity: .92 !important;
+    transform: scaleY(1.8) !important;
+    transform-origin: center center !important;
     pointer-events: none !important;
   }
 
@@ -2948,17 +2973,53 @@ a:focus-visible,button:focus-visible{outline:2px solid #9ab8ff;outline-offset:4p
     z-index: 3 !important;
   }
 
-  #hero .hero-headline {
-    position: relative;
-    z-index: 3;
-  }
-
   #hero .hero-visual {
     position: relative;
     z-index: 2 !important;
   }
 }
 </style>
+
+<script id="kixo-mobile-greeting-toggle">
+(() => {
+  const init = () => {
+    const heading = document.querySelector('#hero .hero-name');
+    if (!heading || heading.dataset.mobileGreetingReady === 'true') return;
+    if (!window.matchMedia('(max-width: 700px)').matches) return;
+
+    heading.dataset.mobileGreetingReady = 'true';
+
+    // Show the greeting one second after page load and leave it visible.
+    window.setTimeout(() => {
+      heading.classList.add('auto-greeting');
+    }, 1000);
+
+    // Tapping the heading toggles between the name and greeting.
+    heading.setAttribute('role', 'button');
+    heading.setAttribute('tabindex', '0');
+    heading.setAttribute('aria-label', 'Show or hide greeting');
+
+    const toggleGreeting = () => {
+      heading.classList.toggle('is-greeting');
+      heading.classList.remove('auto-greeting');
+    };
+
+    heading.addEventListener('click', toggleGreeting);
+    heading.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        toggleGreeting();
+      }
+    });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+</script>
 
 </body>
 </html>
