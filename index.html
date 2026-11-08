@@ -3762,3 +3762,140 @@ a:focus-visible,button:focus-visible{outline:2px solid #9ab8ff;outline-offset:4p
 })();
 </script>
 
+<style id="kixo-mobile-s-curve-same-design-v5">
+@media (max-width: 700px) {
+  /*
+   * Keep the desktop S-curve concept on phones.
+   * The curve runs in a narrow left rail so it stays visible beside
+   * the full-width milestone cards instead of being replaced by a straight line.
+   */
+  .journey-track {
+    position: relative !important;
+    padding: 8px 0 8px 38px !important;
+    overflow: visible !important;
+  }
+
+  .journey-track > .journey-route {
+    position: absolute !important;
+    inset: 0 !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+    overflow: visible !important;
+    z-index: 0 !important;
+  }
+
+  .journey-track > .journey-route .journey-route-desktop {
+    display: none !important;
+  }
+
+  .journey-track > .journey-route .journey-route-mobile {
+    display: block !important;
+  }
+
+  /* The mobile S-curve is deliberately narrow, but still visibly serpentine. */
+  .journey-track > .journey-route .journey-route-base,
+  .journey-track > .journey-route .journey-route-draw {
+    vector-effect: non-scaling-stroke !important;
+    stroke-width: 2.7px !important;
+  }
+
+  .journey-track > .journey-route .journey-route-draw {
+    filter: url(#journeyRouteGlowFixed) !important;
+  }
+
+  .journey-track .journey-route-nodes circle {
+    r: 8px !important;
+  }
+
+  /* Preserve the roomy, readable cards while the path winds in the gutter. */
+  .journey-track > article.journey-item,
+  .journey-track > article.journey-item:nth-of-type(n) {
+    position: relative !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    z-index: 3 !important;
+  }
+
+  .journey-track > .journey-card-connectors {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+  }
+}
+</style>
+
+<script id="kixo-mobile-s-curve-path-v5">
+(() => {
+  const init = () => {
+    const track = document.querySelector('.journey-track');
+    if (!track || track.dataset.mobileSCurveV5 === 'ready') return;
+    track.dataset.mobileSCurveV5 = 'ready';
+
+    const routeSvg = track.querySelector(':scope > .journey-route');
+    const route = routeSvg && routeSvg.querySelector('.journey-route-mobile.journey-route-draw');
+    const base = routeSvg && routeSvg.querySelector('.journey-route-mobile.journey-route-base');
+    const circles = [...track.querySelectorAll('.journey-route-nodes circle')];
+
+    if (!route || !base || circles.length !== 6) {
+      console.warn('Mobile S-curve: expected mobile route and six milestone nodes.');
+      return;
+    }
+
+    /*
+     * A clean six-bend Bezier S-curve. The x-range stays in the left rail;
+     * the cards remain wide and readable on narrow iPhone screens.
+     */
+    const mobilePath = [
+      'M 68 0',
+      'C 150 125 150 225 92 350',
+      'C 34 475 34 575 92 700',
+      'C 150 825 150 925 92 1050',
+      'C 34 1175 34 1275 92 1400',
+      'C 150 1525 150 1625 92 1750',
+      'C 34 1875 34 1975 92 2100'
+    ].join(' ');
+
+    route.setAttribute('d', mobilePath);
+    base.setAttribute('d', mobilePath);
+    routeSvg.setAttribute('viewBox', '0 0 1000 2100');
+    routeSvg.setAttribute('preserveAspectRatio', 'none');
+
+    const placeNodes = () => {
+      const length = route.getTotalLength();
+      circles.forEach((circle, index) => {
+        const fraction = .025 + index * (.95 / (circles.length - 1));
+        const point = route.getPointAtLength(length * fraction);
+        circle.setAttribute('cx', String(point.x));
+        circle.setAttribute('cy', String(point.y));
+      });
+    };
+
+    placeNodes();
+    // Recalculate connector endpoints against the new curved mobile route.
+    requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
+
+    // Keep node positions correct after orientation changes or viewport resizing.
+    window.addEventListener('resize', () => {
+      if (window.matchMedia('(max-width: 700px)').matches) placeNodes();
+    }, { passive: true });
+
+    // The existing checkpoint and connector engines already drive dash progress,
+    // card visibility, and connector reveal/retraction from the same scroll position.
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+</script>
+
